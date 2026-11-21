@@ -3,78 +3,199 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fırsat & Hesap Merkezi</title>
+    <title>Fırsat & Hesap Merkezi - Gelişmiş Takip</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#ffca28">
     <style>
         body {
-            background-color: #121212;
+            background-color: #0f0f0f;
             color: #ffffff;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             min-height: 100vh;
             margin: 0;
-            padding: 20px;
+            padding: 30px 15px;
+        }
+        .container {
+            max-width: 600px;
+            width: 100%;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        header h1 {
+            color: #ffca28;
+            font-size: 26px;
+            margin: 0 0 8px 0;
+        }
+        header p {
+            color: #9e9e9e;
+            font-size: 14px;
+            margin: 0;
         }
         .card {
-            background: #1e1e1e;
-            padding: 24px;
+            background: #1a1a1a;
+            padding: 28px;
             border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-            max-width: 400px;
-            width: 100%;
-            box-sizing: border-box;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+            border: 1px solid #2a2a2a;
+            margin-bottom: 20px;
         }
-        h2 { margin-top: 0; color: #ffca28; text-align: center; font-size: 22px; }
-        p { color: #b0bec5; font-size: 13px; text-align: center; }
-        input, button {
+        .form-group {
+            margin-bottom: 16px;
+        }
+        label {
+            display: block;
+            font-size: 13px;
+            color: #b0bec5;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+        input, select, button {
             width: 100%;
-            padding: 12px;
-            margin-top: 10px;
-            border-radius: 8px;
-            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            border: 1px solid #333;
             font-size: 15px;
             box-sizing: border-box;
-        }
-        input {
-            background: #2c2c2c;
+            background: #242424;
             color: #fff;
-            border: 1px solid #444;
+            outline: none;
+            transition: border-color 0.2s;
         }
-        input:focus { border-color: #ffca28; outline: none; }
+        input:focus, select:focus {
+            border-color: #ffca28;
+        }
+        .row {
+            display: flex;
+            gap: 12px;
+        }
+        .row .form-group {
+            flex: 1;
+        }
         button {
             background-color: #00e676;
             color: #000;
             font-weight: bold;
             cursor: pointer;
+            border: none;
+            margin-top: 5px;
+            transition: background-color 0.2s;
         }
-        button:active { background-color: #00c853; }
-        #status { margin: 15px 0; font-size: 13px; text-align: center; font-weight: bold; }
-        .product-list { margin-top: 20px; border-top: 1px solid #333; padding-top: 10px; }
-        .product-item { background: #262626; padding: 12px; border-radius: 8px; margin-top: 8px; font-size: 13px; word-break: break-all; display: flex; justify-content: space-between; align-items: center; }
-        .delete-btn { background: #ff5252; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; width: auto; margin: 0; }
+        button:hover { background-color: #00c853; }
+        #status {
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            background: #222;
+        }
+        .product-list {
+            margin-top: 10px;
+        }
+        .product-item {
+            background: #222222;
+            padding: 16px;
+            border-radius: 12px;
+            margin-top: 12px;
+            border: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .product-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .product-url {
+            color: #4fc3f7;
+            text-decoration: none;
+            font-weight: 500;
+            word-break: break-all;
+            font-size: 14px;
+        }
+        .product-url:hover { text-decoration: underline; }
+        .badge {
+            background: #333;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            color: #ffca28;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+        .product-details {
+            font-size: 12px;
+            color: #aaa;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #2a2a2a;
+            padding-top: 8px;
+            margin-top: 4px;
+        }
+        .delete-btn {
+            background: #ff5252;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            width: auto;
+            margin: 0;
+        }
+        .delete-btn:hover { background: #ff1744; }
     </style>
 </head>
 <body>
 
-    <div class="card">
-        <h2>⚡ Fırsat & Hesap Merkezi</h2>
-        <p>İkinci el ürün linkini yapıştır, fiyat düşünce cebine bildirim gelsin!</p>
-        
+    <div class="container">
+        <header>
+            <h1>⚡ Fırsat & Hesap Merkezi</h1>
+            <p>Gelişmiş İkinci El Takip ve Akıllı Bildirim Paneli</p>
+        </header>
+
         <div id="status">Bildirim durumu kontrol ediliyor...</div>
 
-        <div id="trackerForm">
-            <input type="text" id="productUrl" placeholder="Ürün linkini yapıştır (Sahibinden vb.)">
-            <input type="number" id="targetPrice" placeholder="Hedef Fiyat (TL) - İsteğe bağlı">
-            <button id="trackBtn">Ürünü Takibe Al</button>
+        <div class="card">
+            <h3 style="margin-top:0; color:#ffca28; font-size:18px; margin-bottom:15px;">🔍 Yeni Ürün Takibi Ekle</h3>
+            
+            <div class="form-group">
+                <label>Ürün Linki (Sahibinden, Letgo, Dolap vb.)</label>
+                <input type="text" id="productUrl" placeholder="https://www.sahibinden.com/ilan/...">
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <label>Hedef / Takip Fiyatı (TL)</label>
+                    <input type="number" id="targetPrice" placeholder="Örn: 4500">
+                </div>
+                <div class="form-group">
+                    <label>Bildirim Kriteri</label>
+                    <select id="alertMode">
+                        <option value="any_drop">Fiyat Düştüğü An</option>
+                        <option value="target_reached">Hedef Fiyata Ulaşınca</option>
+                        <option value="stock_out">Satılınca / İlan Kaldırılınca</option>
+                        <option value="all_changes">Fiyat Düşer veya Artarsa</option>
+                    </select>
+                </div>
+            </div>
+
+            <button id="trackBtn">🚀 Takibi Başlat ve Bildirimleri Aç</button>
         </div>
 
-        <div class="product-list">
-            <strong>Takip Edilen Ürünler:</strong>
-            <div id="trackedItems">Henüz takip edilen ürün yok.</div>
+        <div class="card">
+            <h3 style="margin-top:0; color:#fff; font-size:18px; margin-bottom:10px;">📋 Aktif Takip Listesi</h3>
+            <div class="product-list" id="trackedItems">
+                Henüz takip edilen ürün bulunmuyor.
+            </div>
         </div>
     </div>
 
@@ -83,6 +204,7 @@
         const trackBtn = document.getElementById('trackBtn');
         const productUrlInput = document.getElementById('productUrl');
         const targetPriceInput = document.getElementById('targetPrice');
+        const alertModeSelect = document.getElementById('alertMode');
         const trackedItemsEl = document.getElementById('trackedItems');
 
         let trackedProducts = JSON.parse(localStorage.getItem('trackedProducts')) || [];
@@ -91,31 +213,31 @@
         // Service Worker Kaydı
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js')
-                    .then(reg => console.log('SW Kayıt Başarılı:', reg.scope))
-                    .catch(err => console.log('SW Kayıt Hatası:', err));
+                navigator.serviceWorker.register('sw.js').catch(err => console.log('SW Hata:', err));
             });
         }
 
-        // Bildirim İzin Kontrolü
+        // Bildirim Durumu
         if (!("Notification" in window)) {
             statusEl.innerText = "Bu tarayıcı bildirimleri desteklemiyor.";
             statusEl.style.color = "#ff5252";
-            document.getElementById('trackerForm').style.display = 'none';
         } else {
             updateStatus(Notification.permission);
         }
 
         function updateStatus(permission) {
             if (permission === "granted") {
-                statusEl.innerText = "Bildirim sistemi aktif! 🟢";
+                statusEl.innerText = "Bildirim Motoru Aktif ve Hazır! 🟢";
                 statusEl.style.color = "#00e676";
+                statusEl.style.background = "#05220f";
             } else if (permission === "denied") {
-                statusEl.innerText = "Bildirim izni engellenmiş. Tarayıcı ayarlarından açmalısın. 🔴";
+                statusEl.innerText = "Bildirim izni engellenmiş. Tarayıcı ayarlarından izin vermelisin. 🔴";
                 statusEl.style.color = "#ff5252";
+                statusEl.style.background = "#260b0b";
             } else {
-                statusEl.innerText = "Bildirim izni bekleniyor.";
+                statusEl.innerText = "Bildirim izni bekleniyor (Butona basınca sorulacak). 🟠";
                 statusEl.style.color = "#ff9800";
+                statusEl.style.background = "#261c05";
             }
         }
 
@@ -135,16 +257,66 @@
                 }
             }
 
-            // Listeye ekle
+            const modeTexts = {
+                'any_drop': 'Fiyat Düşüşü',
+                'target_reached': 'Hedef Fiyat',
+                'stock_out': 'Satıldı / Kaldırıldı',
+                'all_changes': 'Tüm Değişiklikler'
+            };
+
+            // Yeni ürünü kaydet
             trackedProducts.push({
                 id: Date.now(),
                 url: url,
-                targetPrice: targetPriceInput.value ? Number(targetPriceInput.value) : 'Fiyat düşüşü',
+                targetPrice: targetPriceInput.value ? Number(targetPriceInput.value) + ' TL' : 'Belirtilmedi',
+                mode: modeTexts[alertModeSelect.value],
                 date: new Date().toLocaleDateString()
             });
+
             localStorage.setItem('trackedProducts', JSON.stringify(trackedProducts));
             
             productUrlInput.value = '';
             targetPriceInput.value = '';
             renderProducts();
 
+            sendNotification("Takip Başlatıldı! 🚀", "Ürün başarıyla listeye eklendi. Durum değişikliklerinde haber vereceğiz.");
+        });
+
+        window.deleteProduct = function(id) {
+            trackedProducts = trackedProducts.filter(p => p.id !== id);
+            localStorage.setItem('trackedProducts', JSON.stringify(trackedProducts));
+            renderProducts();
+        }
+
+        function renderProducts() {
+            if (trackedProducts.length === 0) {
+                trackedItemsEl.innerHTML = '<div style="color: #777; font-size: 13px; text-align: center; padding: 15px;">Henüz takip edilen ürün bulunmuyor.</div>';
+                return;
+            }
+            trackedItemsEl.innerHTML = trackedProducts.map(p => `
+                <div class="product-item">
+                    <div class="product-header">
+                        <a href="${p.url}" target="_blank" class="product-url">🔗 ${p.url}</a>
+                        <span class="badge">${p.mode}</span>
+                    </div>
+                    <div class="product-details">
+                        <span>Hedef: <strong>${p.targetPrice}</strong> | Eklenme: ${p.date}</span>
+                        <button class="delete-btn" onclick="deleteProduct(${p.id})">Kaldır</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function sendNotification(title, bodyText) {
+            if ('serviceWorker' in navigator) {
+                const registration = await navigator.serviceWorker.ready;
+                registration.showNotification(title, {
+                    body: bodyText,
+                    icon: "https://via.placeholder.com/128",
+                    vibrate: [200, 100, 200]
+                });
+            }
+        }
+    </script>
+</body>
+</html>
