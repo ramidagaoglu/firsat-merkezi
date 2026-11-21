@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fırsat & Hesap Merkezi</title>
     <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#ffca28">
     <style>
         body {
             background-color: #121212;
@@ -14,7 +15,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
             padding: 20px;
         }
@@ -23,42 +24,71 @@
             padding: 24px;
             border-radius: 16px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-            text-align: center;
-            max-width: 360px;
+            max-width: 400px;
             width: 100%;
+            box-sizing: border-box;
         }
-        h2 { margin-top: 0; color: #ffca28; }
-        p { color: #b0bec5; font-size: 14px; }
+        h2 { margin-top: 0; color: #ffca28; text-align: center; font-size: 22px; }
+        p { color: #b0bec5; font-size: 13px; text-align: center; }
+        input, button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            border-radius: 8px;
+            border: none;
+            font-size: 15px;
+            box-sizing: border-box;
+        }
+        input {
+            background: #2c2c2c;
+            color: #fff;
+            border: 1px solid #444;
+        }
+        input:focus { border-color: #ffca28; outline: none; }
         button {
             background-color: #00e676;
             color: #000;
-            border: none;
-            padding: 14px 20px;
-            font-size: 16px;
             font-weight: bold;
-            border-radius: 8px;
             cursor: pointer;
-            width: 100%;
-            margin-top: 16px;
         }
         button:active { background-color: #00c853; }
-        #status { margin: 15px 0; font-size: 13px; }
+        #status { margin: 15px 0; font-size: 13px; text-align: center; font-weight: bold; }
+        .product-list { margin-top: 20px; border-top: 1px solid #333; padding-top: 10px; }
+        .product-item { background: #262626; padding: 12px; border-radius: 8px; margin-top: 8px; font-size: 13px; word-break: break-all; display: flex; justify-content: space-between; align-items: center; }
+        .delete-btn { background: #ff5252; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; width: auto; margin: 0; }
     </style>
 </head>
 <body>
 
     <div class="card">
         <h2>⚡ Fırsat & Hesap Merkezi</h2>
-        <p>Anlık indirimler ve pratik araçlar tek yerde.</p>
+        <p>İkinci el ürün linkini yapıştır, fiyat düşünce cebine bildirim gelsin!</p>
+        
         <div id="status">Bildirim durumu kontrol ediliyor...</div>
-        <button id="testBtn">Test Bildirimi Gönder</button>
+
+        <div id="trackerForm">
+            <input type="text" id="productUrl" placeholder="Ürün linkini yapıştır (Sahibinden vb.)">
+            <input type="number" id="targetPrice" placeholder="Hedef Fiyat (TL) - İsteğe bağlı">
+            <button id="trackBtn">Ürünü Takibe Al</button>
+        </div>
+
+        <div class="product-list">
+            <strong>Takip Edilen Ürünler:</strong>
+            <div id="trackedItems">Henüz takip edilen ürün yok.</div>
+        </div>
     </div>
 
     <script>
         const statusEl = document.getElementById('status');
-        const testBtn = document.getElementById('testBtn');
+        const trackBtn = document.getElementById('trackBtn');
+        const productUrlInput = document.getElementById('productUrl');
+        const targetPriceInput = document.getElementById('targetPrice');
+        const trackedItemsEl = document.getElementById('trackedItems');
 
-        // 1. Service Worker Kaydı (Kritik!)
+        let trackedProducts = JSON.parse(localStorage.getItem('trackedProducts')) || [];
+        renderProducts();
+
+        // Service Worker Kaydı
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
@@ -67,21 +97,21 @@
             });
         }
 
-        // 2. Bildirim İzin Durumunu Güncelle
+        // Bildirim İzin Kontrolü
         if (!("Notification" in window)) {
             statusEl.innerText = "Bu tarayıcı bildirimleri desteklemiyor.";
             statusEl.style.color = "#ff5252";
-            testBtn.style.display = "none";
+            document.getElementById('trackerForm').style.display = 'none';
         } else {
             updateStatus(Notification.permission);
         }
 
         function updateStatus(permission) {
             if (permission === "granted") {
-                statusEl.innerText = "Bildirim izni aktif! 🟢";
+                statusEl.innerText = "Bildirim sistemi aktif! 🟢";
                 statusEl.style.color = "#00e676";
             } else if (permission === "denied") {
-                statusEl.innerText = "Bildirim izni engellenmiş. Ayarlardan açmalısın. 🔴";
+                statusEl.innerText = "Bildirim izni engellenmiş. Tarayıcı ayarlarından açmalısın. 🔴";
                 statusEl.style.color = "#ff5252";
             } else {
                 statusEl.innerText = "Bildirim izni bekleniyor.";
@@ -89,40 +119,32 @@
             }
         }
 
-        // 3. Buton Tıklama Olayı
-        testBtn.addEventListener('click', async () => {
-            if (Notification.permission === "granted") {
-                sendNotification();
-            } else {
+        trackBtn.addEventListener('click', async () => {
+            const url = productUrlInput.value.trim();
+            if (!url) {
+                alert("Lütfen geçerli bir ürün linki yapıştır kanka!");
+                return;
+            }
+
+            if (Notification.permission !== "granted") {
                 const permission = await Notification.requestPermission();
                 updateStatus(permission);
-                if (permission === "granted") {
-                    sendNotification();
-                } else {
-                    alert("Bildirim izni verilmedi!");
+                if (permission !== "granted") {
+                    alert("Bildirim izni vermeden takip başlatamazsın!");
+                    return;
                 }
             }
-        });
 
-        async function sendNotification() {
-            try {
-                if ('serviceWorker' in navigator) {
-                    const registration = await navigator.serviceWorker.ready;
-                    await registration.showNotification("Fırsat & Hesap Merkezi", {
-                        body: "Test bildirimi başarıyla gönderildi! 🚀",
-                        icon: "https://via.placeholder.com/128",
-                        badge: "https://via.placeholder.com/128",
-                        vibrate: [200, 100, 200]
-                    });
-                } else {
-                    new Notification("Fırsat & Hesap Merkezi", {
-                        body: "Test bildirimi başarıyla gönderildi! 🚀"
-                    });
-                }
-            } catch (err) {
-                alert("Bildirim gönderilemedi: " + err.message);
-            }
-        }
-    </script>
-</body>
-</html>
+            // Listeye ekle
+            trackedProducts.push({
+                id: Date.now(),
+                url: url,
+                targetPrice: targetPriceInput.value ? Number(targetPriceInput.value) : 'Fiyat düşüşü',
+                date: new Date().toLocaleDateString()
+            });
+            localStorage.setItem('trackedProducts', JSON.stringify(trackedProducts));
+            
+            productUrlInput.value = '';
+            targetPriceInput.value = '';
+            renderProducts();
+
