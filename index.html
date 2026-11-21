@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pratik Fırsat ve Hesap Merkezi</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        .kart {
+            background-color: #1e1e1e;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px auto;
+            max-width: 450px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+        }
+        button {
+            background-color: #00e676;
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>⚡ Fırsat & Hesap Merkezi</h1>
+    <p>Anlık indirimler ve pratik araçlar tek yerde.</p>
+
+    <div class="kart">
+        <h3>🔔 Bildirim Durumu</h3>
+        <p id="durum-metni">Bildirim izni kontrol ediliyor...</p>
+        <button onclick="testBildirimiGonder()">Test Bildirimi Gönder</button>
+    </div>
+
+    <script>
+        // Sayfa açıldığı an izin durumunu kontrol et ve test bildirimi at
+        window.onload = function() {
+            if (!("Notification" in window)) {
+                document.getElementById("durum-metni").innerText = "Tarayıcın bildirimleri desteklemiyor.";
+                return;
+            }
+
+            if (Notification.permission === "granted") {
+                document.getElementById("durum-metni").innerText = "Bildirim izni aktif! 🚀";
+                new Notification("Fırsat Merkezi Aktif!", {
+                    body: "Sistem başarıyla kuruldu, ilk test bildirimi ulaştı."
+                });
+            } else if (Notification.permission !== "denied") {
+                Notification.requestPermission().then(permission => {
+                    if (permission === "granted") {
+                        new Notification("Harika!", { body: "Bildirimler başarıyla açıldı." });
+                    }
+                });
+            } else
