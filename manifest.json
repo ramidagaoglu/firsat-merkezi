@@ -3,7 +3,7 @@
   "short_name": "Fırsat Merkezi",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#121212",
+  "background_color": "#0f0f0f",
   "theme_color": "#ffca28",
   "icons": [
     {
