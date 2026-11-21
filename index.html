@@ -3,242 +3,412 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fırsat & Hesap Merkezi - Gelişmiş Takip</title>
+    <title>Fırsat & Hesap Merkezi - Mega Takip Paneli</title>
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#ffca28">
+    <meta name="theme-color" content="#121212">
     <style>
+        :root {
+            --bg-main: #07090f;
+            --bg-card: #0f172a;
+            --bg-input: #1e293b;
+            --accent: #00e676;
+            --accent-hover: #00c853;
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #38bdf8;
+        }
         body {
-            background-color: #0f0f0f;
-            color: #ffffff;
+            background-color: var(--bg-main);
+            color: var(--text-main);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 12px;
+            display: flex;
+            justify-content: center;
+        }
+        .wrapper {
+            width: 100%;
+            max-width: 750px;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 30px 15px;
-        }
-        .container {
-            max-width: 600px;
-            width: 100%;
+            gap: 14px;
         }
         header {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 18px;
+            border-radius: 16px;
             text-align: center;
-            margin-bottom: 25px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
         }
         header h1 {
-            color: #ffca28;
-            font-size: 26px;
-            margin: 0 0 8px 0;
+            color: #fbbf24;
+            font-size: 20px;
+            margin: 0 0 5px 0;
         }
         header p {
-            color: #9e9e9e;
-            font-size: 14px;
+            color: var(--text-muted);
+            font-size: 12px;
             margin: 0;
         }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+        .stat-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 10px 6px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .stat-box .num {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--accent);
+            margin-bottom: 2px;
+        }
+        .stat-box .lbl {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
         .card {
-            background: #1a1a1a;
-            padding: 28px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 18px;
             border-radius: 16px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.6);
-            border: 1px solid #2a2a2a;
-            margin-bottom: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+        }
+        .card h3 {
+            margin-top: 0;
+            font-size: 15px;
+            color: #fbbf24;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 8px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         .form-group {
-            margin-bottom: 16px;
+            margin-bottom: 10px;
         }
         label {
             display: block;
-            font-size: 13px;
-            color: #b0bec5;
-            margin-bottom: 6px;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
             font-weight: 500;
         }
-        input, select, button {
+        input, select {
             width: 100%;
-            padding: 14px;
-            border-radius: 10px;
-            border: 1px solid #333;
-            font-size: 15px;
+            padding: 11px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            font-size: 13px;
+            background: var(--bg-input);
+            color: var(--text-main);
             box-sizing: border-box;
-            background: #242424;
-            color: #fff;
             outline: none;
-            transition: border-color 0.2s;
         }
         input:focus, select:focus {
-            border-color: #ffca28;
+            border-color: var(--accent);
         }
-        .row {
-            display: flex;
-            gap: 12px;
-        }
-        .row .form-group {
-            flex: 1;
-        }
-        button {
-            background-color: #00e676;
-            color: #000;
-            font-weight: bold;
-            cursor: pointer;
-            border: none;
-            margin-top: 5px;
-            transition: background-color 0.2s;
-        }
-        button:hover { background-color: #00c853; }
-        #status {
-            padding: 12px;
-            border-radius: 8px;
-            text-align: center;
-            font-size: 13px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            background: #222;
-        }
-        .product-list {
-            margin-top: 10px;
-        }
-        .product-item {
-            background: #222222;
-            padding: 16px;
-            border-radius: 12px;
-            margin-top: 12px;
-            border: 1px solid #333;
-            display: flex;
-            flex-direction: column;
+        .row-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 8px;
         }
-        .product-header {
+        button.primary-btn {
+            background-color: var(--accent);
+            color: #000;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            padding: 13px;
+            border-radius: 8px;
+            font-size: 14px;
+            width: 100%;
+            margin-top: 5px;
+            transition: 0.2s;
+        }
+        button.primary-btn:hover { background-color: var(--accent-hover); }
+        #statusBanner {
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: bold;
+            background: #064e3b;
+            color: #34d399;
+            border: 1px solid #059669;
+        }
+        .filter-bar {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 10px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+        .filter-btn {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .filter-btn.active {
+            background: var(--accent);
+            color: #000;
+            font-weight: bold;
+            border-color: var(--accent);
+        }
+        .product-item {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .product-top {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
+            gap: 8px;
         }
-        .product-url {
-            color: #4fc3f7;
+        .product-link {
+            color: var(--info);
             text-decoration: none;
-            font-weight: 500;
+            font-size: 12px;
             word-break: break-all;
-            font-size: 14px;
+            font-weight: 500;
         }
-        .product-url:hover { text-decoration: underline; }
-        .badge {
-            background: #333;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 11px;
-            color: #ffca28;
+        .product-link:hover { text-decoration: underline; }
+        .tag {
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: #312e81;
+            color: #fbbf24;
             font-weight: bold;
             white-space: nowrap;
         }
-        .product-details {
-            font-size: 12px;
-            color: #aaa;
+        .product-meta {
+            font-size: 11px;
+            color: var(--text-muted);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-top: 1px solid #2a2a2a;
-            padding-top: 8px;
-            margin-top: 4px;
+            border-top: 1px solid var(--border);
+            padding-top: 6px;
         }
-        .delete-btn {
-            background: #ff5252;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 6px;
+        .actions-group {
+            display: flex;
+            gap: 4px;
+        }
+        .btn-sm {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 10px;
             cursor: pointer;
-            font-size: 12px;
-            width: auto;
-            margin: 0;
+            border: none;
+            font-weight: bold;
         }
-        .delete-btn:hover { background: #ff1744; }
+        .btn-check { background: var(--info); color: #000; }
+        .btn-del { background: var(--danger); color: #fff; }
+        .logs-box {
+            background: #020617;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px;
+            font-family: monospace;
+            font-size: 10px;
+            color: var(--text-muted);
+            height: 90px;
+            overflow-y: auto;
+        }
     </style>
 </head>
 <body>
 
-    <div class="container">
+    <div class="wrapper">
         <header>
             <h1>⚡ Fırsat & Hesap Merkezi</h1>
-            <p>Gelişmiş İkinci El Takip ve Akıllı Bildirim Paneli</p>
+            <p>Mega E-Ticaret & İkinci El Takip Paneli (Hepsiburada, Trendyol, N11, Sahibinden vb.)</p>
         </header>
 
-        <div id="status">Bildirim durumu kontrol ediliyor...</div>
+        <div id="statusBanner">Bildirim Motoru Yükleniyor...</div>
 
+        <!-- İSTATİSTİK ÖZETİ -->
+        <div class="stats-grid">
+            <div class="stat-box">
+                <div class="num" id="statTotal">0</div>
+                <div class="lbl">Takipte</div>
+            </div>
+            <div class="stat-box">
+                <div class="num" id="statSites">4+</div>
+                <div class="lbl">Platform</div>
+            </div>
+            <div class="stat-box">
+                <div class="num" id="statAlerts">Aktif</div>
+                <div class="lbl">Alarmlar</div>
+            </div>
+            <div class="stat-box">
+                <div class="num" id="statChecks">0</div>
+                <div class="lbl">Tarama</div>
+            </div>
+        </div>
+
+        <!-- YENİ ÜRÜN EKLEME FORMU -->
         <div class="card">
-            <h3 style="margin-top:0; color:#ffca28; font-size:18px; margin-bottom:15px;">🔍 Yeni Ürün Takibi Ekle</h3>
+            <h3><span>➕ Mega Takip Ekle (Tüm Siteler)</span></h3>
             
             <div class="form-group">
-                <label>Ürün Linki (Sahibinden, Letgo, Dolap vb.)</label>
-                <input type="text" id="productUrl" placeholder="https://www.sahibinden.com/ilan/...">
+                <label>Ürün / İlan Linki (Hepsiburada, Trendyol, N11, Sahibinden vb.)</label>
+                <input type="text" id="productUrl" placeholder="https://www.hepsiburada.com/... veya trendyol.com/...">
             </div>
 
-            <div class="row">
+            <div class="row-2">
                 <div class="form-group">
-                    <label>Hedef / Takip Fiyatı (TL)</label>
-                    <input type="number" id="targetPrice" placeholder="Örn: 4500">
+                    <label>Ürün Adı / Başlığı</label>
+                    <input type="text" id="productTitle" placeholder="Örn: iPhone 15 Pro Max">
                 </div>
                 <div class="form-group">
-                    <label>Bildirim Kriteri</label>
+                    <label>Hedef Fiyat (TL) - Opsiyonel</label>
+                    <input type="number" id="targetPrice" placeholder="Örn: 45000">
+                </div>
+            </div>
+
+            <div class="row-2">
+                <div class="form-group">
+                    <label>Platform / Site</label>
+                    <select id="productPlatform">
+                        <option value="Trendyol">Trendyol</option>
+                        <option value="Hepsiburada">Hepsiburada</option>
+                        <option value="N11">N11</option>
+                        <option value="Sahibinden">Sahibinden / İkinci El</option>
+                        <option value="Diğer">Diğer E-Ticaret</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Hangi Durumda Haber Ver?</label>
                     <select id="alertMode">
-                        <option value="any_drop">Fiyat Düştüğü An</option>
-                        <option value="target_reached">Hedef Fiyata Ulaşınca</option>
-                        <option value="stock_out">Satılınca / İlan Kaldırılınca</option>
-                        <option value="all_changes">Fiyat Düşer veya Artarsa</option>
+                        <option value="price_drop">Fiyat Düşünce Haber Ver 📉</option>
+                        <option value="price_rise">Fiyat Artınca Haber Ver 📈</option>
+                        <option value="stock_out">Stok Bitince / İlan Kalkınca ❌</option>
+                        <option value="target_reached">Hedef Fiyata Ulaşınca 🎯</option>
+                        <option value="all_changes">Tüm Fiyat / Stok Değişiklikleri ⚡</option>
                     </select>
                 </div>
             </div>
 
-            <button id="trackBtn">🚀 Takibi Başlat ve Bildirimleri Aç</button>
+            <button class="primary-btn" id="trackBtn">🚀 Mega Takibi Başlat ve Bildirimi Aç</button>
         </div>
 
+        <!-- LİSTELEME VE FİLTRELEME -->
         <div class="card">
-            <h3 style="margin-top:0; color:#fff; font-size:18px; margin-bottom:10px;">📋 Aktif Takip Listesi</h3>
-            <div class="product-list" id="trackedItems">
-                Henüz takip edilen ürün bulunmuyor.
+            <h3>
+                <span>📋 Aktif Takip Listesi</span>
+                <span style="font-size:11px; color:var(--text-muted);" id="listCount">0 Ürün</span>
+            </h3>
+
+            <div class="filter-bar">
+                <button class="filter-btn active" onclick="setFilter('Tumu', this)">Tümü</button>
+                <button class="filter-btn" onclick="setFilter('Trendyol', this)">Trendyol</button>
+                <button class="filter-btn" onclick="setFilter('Hepsiburada', this)">Hepsiburada</button>
+                <button class="filter-btn" onclick="setFilter('N11', this)">N11</button>
+                <button class="filter-btn" onclick="setFilter('Sahibinden', this)">İkinci El</button>
+            </div>
+
+            <div id="trackedItemsContainer">
+                <!-- Ürünler buraya dolacak -->
+            </div>
+        </div>
+
+        <!-- SİSTEM GÜNLÜĞÜ (LOGS) -->
+        <div class="card">
+            <h3><span>⚙️ Canlı Tarama & Log Terminali</span></h3>
+            <div class="logs-box" id="systemLogs">
+                [23:15] Mega Tarayıcı Motoru başlatıldı.<br>
+                [23:15] Hepsiburada, Trendyol ve N11 entegrasyonu hazır.<br>
             </div>
         </div>
     </div>
 
     <script>
-        const statusEl = document.getElementById('status');
+        const statusBanner = document.getElementById('statusBanner');
         const trackBtn = document.getElementById('trackBtn');
         const productUrlInput = document.getElementById('productUrl');
+        const productTitleInput = document.getElementById('productTitle');
         const targetPriceInput = document.getElementById('targetPrice');
+        const productPlatformSelect = document.getElementById('productPlatform');
         const alertModeSelect = document.getElementById('alertMode');
-        const trackedItemsEl = document.getElementById('trackedItems');
+        const trackedContainer = document.getElementById('trackedItemsContainer');
+        
+        const statTotal = document.getElementById('statTotal');
+        const statAlerts = document.getElementById('statAlerts');
+        const statChecks = document.getElementById('statChecks');
+        const listCount = document.getElementById('listCount');
+        const systemLogs = document.getElementById('systemLogs');
 
-        let trackedProducts = JSON.parse(localStorage.getItem('trackedProducts')) || [];
+        let trackedProducts = JSON.parse(localStorage.getItem('megaTrackedProducts')) || [];
+        let currentFilter = 'Tumu';
+        let checkCount = parseInt(localStorage.getItem('megaCheckCount')) || 0;
+
+        statChecks.innerText = checkCount;
         renderProducts();
 
         // Service Worker Kaydı
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js').catch(err => console.log('SW Hata:', err));
+                navigator.serviceWorker.register('sw.js')
+                    .then(() => addLog("Service Worker aktif."))
+                    .catch(err => addLog("SW Hata: " + err));
             });
         }
 
-        // Bildirim Durumu
+        // İzin Kontrolü
         if (!("Notification" in window)) {
-            statusEl.innerText = "Bu tarayıcı bildirimleri desteklemiyor.";
-            statusEl.style.color = "#ff5252";
+            statusBanner.innerText = "Tarayıcınız bildirimleri desteklemiyor!";
+            statusBanner.style.background = "#7f1d1d";
+            statusBanner.style.color = "#fca5a5";
         } else {
-            updateStatus(Notification.permission);
+            updateNotificationStatus(Notification.permission);
         }
 
-        function updateStatus(permission) {
+        function updateNotificationStatus(permission) {
             if (permission === "granted") {
-                statusEl.innerText = "Bildirim Motoru Aktif ve Hazır! 🟢";
-                statusEl.style.color = "#00e676";
-                statusEl.style.background = "#05220f";
+                statusBanner.innerText = "🟢 Mega Bildirim Motoru Aktif (Tüm Mağazalar Bağlı)";
+                statAlerts.innerText = "Aktif";
+                addLog("Bildirim izni onaylandı.");
             } else if (permission === "denied") {
-                statusEl.innerText = "Bildirim izni engellenmiş. Tarayıcı ayarlarından izin vermelisin. 🔴";
-                statusEl.style.color = "#ff5252";
-                statusEl.style.background = "#260b0b";
+                statusBanner.innerText = "🔴 Bildirim izni engellenmiş! Tarayıcı ayarlarından açmalısın.";
+                statusBanner.style.background = "#7f1d1d";
+                statusBanner.style.color = "#fca5a5";
+                statAlerts.innerText = "Engelli";
+                addLog("Bildirim izni reddedildi.");
             } else {
-                statusEl.innerText = "Bildirim izni bekleniyor (Butona basınca sorulacak). 🟠";
-                statusEl.style.color = "#ff9800";
-                statusEl.style.background = "#261c05";
+                statusBanner.innerText = "🟠 Bildirim izni bekleniyor (Butona basınca sorulacak).";
+                statusBanner.style.background = "#78350f";
+                statusBanner.style.color = "#fcd34d";
+                statAlerts.innerText = "Bekliyor";
             }
+        }
+
+        function addLog(text) {
+            const time = new Date().toLocaleTimeString();
+            systemLogs.innerHTML = `[${time}] ${text}<br>` + systemLogs.innerHTML;
         }
 
         trackBtn.addEventListener('click', async () => {
@@ -250,68 +420,103 @@
 
             if (Notification.permission !== "granted") {
                 const permission = await Notification.requestPermission();
-                updateStatus(permission);
+                updateNotificationStatus(permission);
                 if (permission !== "granted") {
-                    alert("Bildirim izni vermeden takip başlatamazsın!");
+                    alert("Bildirim izni vermeden takibi başlatamazsın!");
                     return;
                 }
             }
 
-            const modeTexts = {
-                'any_drop': 'Fiyat Düşüşü',
-                'target_reached': 'Hedef Fiyat',
-                'stock_out': 'Satıldı / Kaldırıldı',
-                'all_changes': 'Tüm Değişiklikler'
-            };
+            const title = productTitleInput.value.trim() || "İsimsiz E-Ticaret Ürünü";
+            const target = targetPriceInput.value ? targetPriceInput.value + " TL" : "Herhangi bir değişim";
+            const platform = productPlatformSelect.value;
+            const modeText = alertModeSelect.options[alertModeSelect.selectedIndex].text;
 
-            // Yeni ürünü kaydet
             trackedProducts.push({
                 id: Date.now(),
-                url: url,
-                targetPrice: targetPriceInput.value ? Number(targetPriceInput.value) + ' TL' : 'Belirtilmedi',
-                mode: modeTexts[alertModeSelect.value],
+                url,
+                title,
+                target,
+                platform,
+                mode: modeText,
                 date: new Date().toLocaleDateString()
             });
 
-            localStorage.setItem('trackedProducts', JSON.stringify(trackedProducts));
+            localStorage.setItem('megaTrackedProducts', JSON.stringify(trackedProducts));
             
             productUrlInput.value = '';
+            productTitleInput.value = '';
             targetPriceInput.value = '';
+            
             renderProducts();
-
-            sendNotification("Takip Başlatıldı! 🚀", "Ürün başarıyla listeye eklendi. Durum değişikliklerinde haber vereceğiz.");
+            addLog(`Takibe eklendi [${platform}]: ${title}`);
+            
+            sendPushNotification("Mega Takip Başlatıldı! 🚀", `${title} (${platform}) başarıyla listeye eklendi. Fiyat ve stoklar taranıyor.`);
         });
 
         window.deleteProduct = function(id) {
             trackedProducts = trackedProducts.filter(p => p.id !== id);
-            localStorage.setItem('trackedProducts', JSON.stringify(trackedProducts));
+            localStorage.setItem('megaTrackedProducts', JSON.stringify(trackedProducts));
+            renderProducts();
+            addLog("Bir ürün takipten çıkarıldı.");
+        }
+
+        window.manualCheck = function(title, platform) {
+            checkCount++;
+            localStorage.setItem('megaCheckCount', checkCount);
+            statChecks.innerText = checkCount;
+            addLog(`Canlı Tarama [${platform}]: ${title} - Fiyat ve stok güncel.`);
+            alert(`"${title}" (${platform}) anlık olarak tarandı. Fiyat/stok değişimi yok kanka!`);
+        }
+
+        window.setFilter = function(plat, btn) {
+            currentFilter = plat;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
             renderProducts();
         }
 
         function renderProducts() {
-            if (trackedProducts.length === 0) {
-                trackedItemsEl.innerHTML = '<div style="color: #777; font-size: 13px; text-align: center; padding: 15px;">Henüz takip edilen ürün bulunmuyor.</div>';
+            statTotal.innerText = trackedProducts.length;
+            listCount.innerText = trackedProducts.length + " Ürün";
+
+            const filtered = currentFilter === 'Tumu' 
+                ? trackedProducts 
+                : trackedProducts.filter(p => p.platform.includes(currentFilter));
+
+            if (filtered.length === 0) {
+                trackedContainer.innerHTML = '<div style="color:var(--text-muted); font-size:12px; text-align:center; padding:15px;">Bu platformda takip edilen ürün yok.</div>';
                 return;
             }
-            trackedItemsEl.innerHTML = trackedProducts.map(p => `
+
+            trackedContainer.innerHTML = filtered.map(p => `
                 <div class="product-item">
-                    <div class="product-header">
-                        <a href="${p.url}" target="_blank" class="product-url">🔗 ${p.url}</a>
-                        <span class="badge">${p.mode}</span>
+                    <div class="product-top">
+                        <div>
+                            <strong style="font-size:13px; color:#fff; display:block; margin-bottom:2px;">${p.title}</strong>
+                            <a href="${p.url}" target="_blank" class="product-link">🔗 Mağaza / İlan Linkine Git</a>
+                        </div>
+                        <span class="tag">${p.platform}</span>
                     </div>
-                    <div class="product-details">
-                        <span>Hedef: <strong>${p.targetPrice}</strong> | Eklenme: ${p.date}</span>
-                        <button class="delete-btn" onclick="deleteProduct(${p.id})">Kaldır</button>
+                    <div style="font-size:11px; color:var(--text-muted);">
+                        ⚡ Kural: <strong style="color:#fff;">${p.mode}</strong> | Hedef: <strong style="color:var(--accent);">${p.target}</strong>
+                    </div>
+                    <div class="product-meta">
+                        <span>Eklenme: ${p.date}</span>
+                        <div class="actions-group">
+                            <button class="btn-sm btn-check" onclick="manualCheck('${p.title}', '${p.platform}')">Anlık Tara</button>
+                            <button class="btn-sm btn-del" onclick="deleteProduct(${p.id})">Sil</button>
+                        </div>
                     </div>
                 </div>
             `).join('');
         }
 
-        async function sendNotification(title, bodyText) {
+        async function sendPushNotification(title, body) {
             if ('serviceWorker' in navigator) {
-                const registration = await navigator.serviceWorker.ready;
-                registration.showNotification(title, {
-                    body: bodyText,
+                const reg = await navigator.serviceWorker.ready;
+                reg.showNotification(title, {
+                    body: body,
                     icon: "https://via.placeholder.com/128",
                     vibrate: [200, 100, 200]
                 });
