@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fırsat & Hesap Merkezi</title>
+    <link rel="manifest" href="manifest.json">
     <style>
         body {
             background-color: #121212;
@@ -32,7 +33,7 @@
             background-color: #00e676;
             color: #000;
             border: none;
-            padding: 12px 20px;
+            padding: 14px 20px;
             font-size: 16px;
             font-weight: bold;
             border-radius: 8px;
@@ -41,6 +42,7 @@
             margin-top: 16px;
         }
         button:active { background-color: #00c853; }
+        #status { margin: 15px 0; font-size: 13px; }
     </style>
 </head>
 <body>
@@ -48,7 +50,7 @@
     <div class="card">
         <h2>⚡ Fırsat & Hesap Merkezi</h2>
         <p>Anlık indirimler ve pratik araçlar tek yerde.</p>
-        <div id="status" style="margin: 15px 0; font-size: 13px; color: #ff9800;">Bildirim izni kontrol ediliyor...</div>
+        <div id="status">Bildirim durumu kontrol ediliyor...</div>
         <button id="testBtn">Test Bildirimi Gönder</button>
     </div>
 
@@ -56,20 +58,30 @@
         const statusEl = document.getElementById('status');
         const testBtn = document.getElementById('testBtn');
 
-        // Bildirim desteği kontrolü
-        if (!("Notification" in window)) {
-            statusEl.innerText = "Bu tarayıcı bildirimleri desteklemiyor.";
-            testBtn.style.display = "none";
-        } else {
-            updateStatusText(Notification.permission);
+        // 1. Service Worker Kaydı (Kritik!)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('SW Kayıt Başarılı:', reg.scope))
+                    .catch(err => console.log('SW Kayıt Hatası:', err));
+            });
         }
 
-        function updateStatusText(permission) {
+        // 2. Bildirim İzin Durumunu Güncelle
+        if (!("Notification" in window)) {
+            statusEl.innerText = "Bu tarayıcı bildirimleri desteklemiyor.";
+            statusEl.style.color = "#ff5252";
+            testBtn.style.display = "none";
+        } else {
+            updateStatus(Notification.permission);
+        }
+
+        function updateStatus(permission) {
             if (permission === "granted") {
                 statusEl.innerText = "Bildirim izni aktif! 🟢";
                 statusEl.style.color = "#00e676";
             } else if (permission === "denied") {
-                statusEl.innerText = "Bildirim izni engellenmiş. Tarayıcı ayarlarından açmalısın. 🔴";
+                statusEl.innerText = "Bildirim izni engellenmiş. Ayarlardan açmalısın. 🔴";
                 statusEl.style.color = "#ff5252";
             } else {
                 statusEl.innerText = "Bildirim izni bekleniyor.";
@@ -77,29 +89,40 @@
             }
         }
 
+        // 3. Buton Tıklama Olayı
         testBtn.addEventListener('click', async () => {
-            if (Notification.permission !== "granted") {
+            if (Notification.permission === "granted") {
+                sendNotification();
+            } else {
                 const permission = await Notification.requestPermission();
-                updateStatusText(permission);
-                if (permission !== "granted") {
+                updateStatus(permission);
+                if (permission === "granted") {
+                    sendNotification();
+                } else {
                     alert("Bildirim izni verilmedi!");
-                    return;
                 }
             }
-
-            // Bildirimi fırlat
-            if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
-                const registration = await navigator.serviceWorker.ready;
-                registration.showNotification("Fırsat & Hesap Merkezi", {
-                    body: "Test bildirimi başarıyla gönderildi! 🚀",
-                    icon: "https://via.placeholder.com/128"
-                });
-            } else {
-                new Notification("Fırsat & Hesap Merkezi", {
-                    body: "Test bildirimi başarıyla gönderildi! 🚀"
-                });
-            }
         });
+
+        async function sendNotification() {
+            try {
+                if ('serviceWorker' in navigator) {
+                    const registration = await navigator.serviceWorker.ready;
+                    await registration.showNotification("Fırsat & Hesap Merkezi", {
+                        body: "Test bildirimi başarıyla gönderildi! 🚀",
+                        icon: "https://via.placeholder.com/128",
+                        badge: "https://via.placeholder.com/128",
+                        vibrate: [200, 100, 200]
+                    });
+                } else {
+                    new Notification("Fırsat & Hesap Merkezi", {
+                        body: "Test bildirimi başarıyla gönderildi! 🚀"
+                    });
+                }
+            } catch (err) {
+                alert("Bildirim gönderilemedi: " + err.message);
+            }
+        }
     </script>
 </body>
 </html>
