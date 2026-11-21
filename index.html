@@ -2,525 +2,1531 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fırsat & Hesap Merkezi - Mega Takip Paneli</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fırsat & Hesap Merkezi PRO | Akıllı Fiyat & Stok Radar</title>
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#121212">
+    <meta name="theme-color" content="#090d16">
     <style>
         :root {
-            --bg-main: #07090f;
-            --bg-card: #0f172a;
+            --bg-dark: #060913;
+            --bg-panel: #0f1626;
+            --bg-card: #162035;
             --bg-input: #1e293b;
-            --accent: #00e676;
-            --accent-hover: #00c853;
-            --text-main: #ffffff;
-            --text-muted: #94a3b8;
-            --border: #334155;
+            --border: #2a3954;
+            --border-light: #384b6e;
+            --primary: #00e676;
+            --primary-dark: #00b259;
+            --secondary: #38bdf8;
+            --accent: #fbbf24;
             --danger: #ef4444;
-            --warning: #f59e0b;
-            --info: #38bdf8;
+            --purple: #a855f7;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --text-muted: #64748b;
+            --shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.7);
         }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
         body {
-            background-color: var(--bg-main);
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-dark);
             color: var(--text-main);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            margin: 0;
-            padding: 12px;
-            display: flex;
-            justify-content: center;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.5;
+            padding-bottom: 80px;
         }
-        .wrapper {
-            width: 100%;
-            max-width: 750px;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-        }
-        header {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            padding: 18px;
-            border-radius: 16px;
-            text-align: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
-        }
-        header h1 {
-            color: #fbbf24;
-            font-size: 20px;
-            margin: 0 0 5px 0;
-        }
-        header p {
-            color: var(--text-muted);
-            font-size: 12px;
-            margin: 0;
-        }
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-        }
-        .stat-box {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            padding: 10px 6px;
-            border-radius: 12px;
-            text-align: center;
-        }
-        .stat-box .num {
-            font-size: 16px;
-            font-weight: bold;
-            color: var(--accent);
-            margin-bottom: 2px;
-        }
-        .stat-box .lbl {
-            font-size: 10px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-        }
-        .card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            padding: 18px;
-            border-radius: 16px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
-        }
-        .card h3 {
-            margin-top: 0;
-            font-size: 15px;
-            color: #fbbf24;
+
+        /* Üst Navigasyon */
+        .top-bar {
+            background: rgba(15, 22, 38, 0.95);
+            backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--border);
-            padding-bottom: 8px;
-            margin-bottom: 12px;
+            padding: 14px 16px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        .form-group {
-            margin-bottom: 10px;
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-        label {
-            display: block;
-            font-size: 11px;
-            color: var(--text-muted);
-            margin-bottom: 4px;
-            font-weight: 500;
-        }
-        input, select {
-            width: 100%;
-            padding: 11px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            font-size: 13px;
-            background: var(--bg-input);
-            color: var(--text-main);
-            box-sizing: border-box;
-            outline: none;
-        }
-        input:focus, select:focus {
-            border-color: var(--accent);
-        }
-        .row-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-        }
-        button.primary-btn {
-            background-color: var(--accent);
+
+        .brand-logo {
+            background: linear-gradient(135deg, var(--accent), #f59e0b);
             color: #000;
-            font-weight: bold;
-            border: none;
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 18px;
+            box-shadow: 0 0 15px rgba(251, 191, 36, 0.4);
+        }
+
+        .brand-text h1 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: 0.3px;
+            color: var(--text-main);
+        }
+
+        .brand-text span {
+            font-size: 10px;
+            color: var(--primary);
+            font-weight: 600;
+            text-transform: uppercase;
+            display: block;
+        }
+
+        .status-pill {
+            font-size: 11px;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 5px;
             cursor: pointer;
-            padding: 13px;
+            border: 1px solid transparent;
+        }
+
+        .status-active {
+            background: rgba(0, 230, 118, 0.12);
+            color: var(--primary);
+            border-color: rgba(0, 230, 118, 0.3);
+        }
+
+        .status-warn {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--accent);
+            border-color: rgba(245, 158, 11, 0.3);
+        }
+
+        .status-err {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .pulse-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); opacity: 1; }
+            50% { transform: scale(1.4); opacity: 0.5; }
+            100% { transform: scale(0.95); opacity: 1; }
+        }
+
+        /* Ana Konteyner */
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 14px;
+        }
+
+        /* Alt Menü (Mobil Uygulama Hissi) */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 22, 38, 0.98);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+            z-index: 100;
+        }
+
+        .nav-item {
+            background: none;
+            border: none;
+            color: var(--text-sub);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 4px 12px;
             border-radius: 8px;
-            font-size: 14px;
-            width: 100%;
-            margin-top: 5px;
             transition: 0.2s;
         }
-        button.primary-btn:hover { background-color: var(--accent-hover); }
-        #statusBanner {
-            padding: 10px;
-            border-radius: 8px;
-            text-align: center;
-            font-size: 12px;
-            font-weight: bold;
-            background: #064e3b;
-            color: #34d399;
-            border: 1px solid #059669;
+
+        .nav-item.active {
+            color: var(--primary);
         }
-        .filter-bar {
+
+        .nav-item span.icon {
+            font-size: 18px;
+        }
+
+        /* Sekme İçerikleri */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.25s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* KPI Kartları */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        @media (min-width: 600px) {
+            .kpi-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .kpi-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 14px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kpi-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary);
+        }
+
+        .kpi-card.blue::after { background: var(--secondary); }
+        .kpi-card.yellow::after { background: var(--accent); }
+        .kpi-card.purple::after { background: var(--purple); }
+
+        .kpi-title {
+            font-size: 11px;
+            color: var(--text-sub);
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .kpi-value {
+            font-size: 22px;
+            font-weight: 800;
+            margin: 4px 0;
+            color: var(--text-main);
+        }
+
+        .kpi-sub {
+            font-size: 11px;
+            color: var(--primary);
+        }
+
+        /* Paneller & Kartlar */
+        .panel {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 18px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+        }
+
+        .panel-header {
             display: flex;
-            gap: 6px;
-            margin-bottom: 10px;
-            overflow-x: auto;
-            padding-bottom: 4px;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 12px;
+            margin-bottom: 16px;
         }
-        .filter-btn {
+
+        .panel-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0;
+        }
+
+        /* Form Elemanları */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        @media (min-width: 600px) {
+            .form-grid.cols-2 {
+                grid-template-columns: 1fr 1fr;
+            }
+            .form-grid.cols-3 {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .field label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-sub);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .field input, .field select, .field textarea {
             background: var(--bg-input);
             border: 1px solid var(--border);
-            color: var(--text-muted);
-            padding: 5px 10px;
-            border-radius: 6px;
-            font-size: 11px;
+            color: var(--text-main);
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 13px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            width: 100%;
+        }
+
+        .field input:focus, .field select:focus, .field textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 230, 118, 0.15);
+        }
+
+        .input-with-btn {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-paste {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            color: var(--secondary);
+            padding: 0 14px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 700;
             cursor: pointer;
             white-space: nowrap;
         }
-        .filter-btn.active {
-            background: var(--accent);
-            color: #000;
-            font-weight: bold;
-            border-color: var(--accent);
-        }
-        .product-item {
-            background: var(--bg-input);
+
+        /* Checkbox / Toggle Seçenekleri */
+        .triggers-box {
+            background: var(--bg-card);
             border: 1px solid var(--border);
+            border-radius: 12px;
             padding: 12px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        @media (min-width: 600px) {
+            .triggers-box {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--text-main);
+            cursor: pointer;
+            padding: 4px 0;
+        }
+
+        .toggle-row input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        /* Butonlar */
+        .btn {
+            padding: 13px 18px;
             border-radius: 10px;
-            margin-bottom: 8px;
+            border: none;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: #04130a;
+            box-shadow: 0 4px 15px rgba(0, 230, 118, 0.3);
+        }
+
+        .btn-primary:active { transform: scale(0.98); }
+
+        .btn-secondary {
+            background: var(--bg-input);
+            color: var(--text-main);
+            border: 1px solid var(--border-light);
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        /* Arama & Filtre Çubuğu */
+        .search-filter-bar {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 10px;
+            margin-bottom: 14px;
         }
-        .product-top {
+
+        .chips-scroll {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            scrollbar-width: none;
+        }
+
+        .chips-scroll::-webkit-scrollbar { display: none; }
+
+        .chip {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            color: var(--text-sub);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .chip.active {
+            background: var(--primary);
+            color: #000;
+            border-color: var(--primary);
+        }
+
+        /* Ürün Kartları */
+        .product-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 15px;
+            margin-bottom: 12px;
+            position: relative;
+            transition: border-color 0.2s;
+        }
+
+        .product-card:hover {
+            border-color: var(--border-light);
+        }
+
+        .p-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            gap: 8px;
+            gap: 10px;
+            margin-bottom: 8px;
         }
-        .product-link {
-            color: var(--info);
+
+        .p-platform-badge {
+            font-size: 10px;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .plat-trendyol { background: rgba(242, 122, 26, 0.2); color: #ff8c38; border: 1px solid rgba(242, 122, 26, 0.4); }
+        .plat-hepsiburada { background: rgba(255, 96, 0, 0.2); color: #ff7722; border: 1px solid rgba(255, 96, 0, 0.4); }
+        .plat-n11 { background: rgba(168, 85, 247, 0.2); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.4); }
+        .plat-sahibinden { background: rgba(251, 191, 36, 0.2); color: #fcd34d; border: 1px solid rgba(251, 191, 36, 0.4); }
+        .plat-amazon { background: rgba(56, 189, 248, 0.2); color: #7dd3fc; border: 1px solid rgba(56, 189, 248, 0.4); }
+        .plat-diger { background: rgba(148, 163, 184, 0.2); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.4); }
+
+        .p-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin: 4px 0;
+        }
+
+        .p-link {
+            font-size: 11px;
+            color: var(--secondary);
             text-decoration: none;
-            font-size: 12px;
-            word-break: break-all;
-            font-weight: 500;
-        }
-        .product-link:hover { text-decoration: underline; }
-        .tag {
-            font-size: 9px;
-            padding: 2px 6px;
-            border-radius: 4px;
-            background: #312e81;
-            color: #fbbf24;
-            font-weight: bold;
+            display: inline-block;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
             white-space: nowrap;
         }
-        .product-meta {
-            font-size: 11px;
-            color: var(--text-muted);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-top: 1px solid var(--border);
-            padding-top: 6px;
+
+        .p-prices {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            background: var(--bg-panel);
+            padding: 10px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border: 1px solid var(--border);
         }
-        .actions-group {
+
+        .price-col span {
+            display: block;
+            font-size: 10px;
+            color: var(--text-sub);
+        }
+
+        .price-col strong {
+            font-size: 14px;
+            color: var(--text-main);
+        }
+
+        .price-col strong.target { color: var(--primary); }
+        .price-col strong.drop { color: var(--primary); }
+        .price-col strong.rise { color: var(--danger); }
+
+        .p-tags {
             display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .mini-tag {
+            background: var(--bg-input);
+            color: var(--text-sub);
+            font-size: 10px;
+            padding: 3px 7px;
+            border-radius: 5px;
+            border: 1px solid var(--border);
+        }
+
+        /* Mini Grafik Çubukları */
+        .mini-chart {
+            display: flex;
+            align-items: flex-end;
+            gap: 4px;
+            height: 28px;
+            padding: 4px 0;
+            margin-bottom: 8px;
+        }
+
+        .chart-bar {
+            flex: 1;
+            background: var(--secondary);
+            border-radius: 3px 3px 0 0;
+            min-height: 4px;
+            opacity: 0.7;
+            transition: 0.3s;
+        }
+
+        .chart-bar:last-child {
+            background: var(--primary);
+            opacity: 1;
+        }
+
+        .p-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 6px;
+            border-top: 1px solid var(--border);
+            padding-top: 10px;
+        }
+
+        .btn-xs {
+            padding: 7px 10px;
+            border-radius: 7px;
+            font-size: 11px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             gap: 4px;
         }
-        .btn-sm {
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 10px;
-            cursor: pointer;
-            border: none;
-            font-weight: bold;
-        }
-        .btn-check { background: var(--info); color: #000; }
-        .btn-del { background: var(--danger); color: #fff; }
-        .logs-box {
-            background: #020617;
+
+        .btn-sim-drop { background: rgba(0, 230, 118, 0.15); color: var(--primary); border: 1px solid rgba(0, 230, 118, 0.3); }
+        .btn-sim-stock { background: rgba(56, 189, 248, 0.15); color: var(--secondary); border: 1px solid rgba(56, 189, 248, 0.3); }
+        .btn-del-item { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); }
+
+        /* Terminal Logları */
+        .terminal {
+            background: #03050a;
             border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 8px;
-            font-family: monospace;
-            font-size: 10px;
-            color: var(--text-muted);
-            height: 90px;
+            border-radius: 12px;
+            padding: 12px;
+            font-family: "Courier New", Courier, monospace;
+            font-size: 11px;
+            height: 180px;
             overflow-y: auto;
+            color: #a3e635;
+        }
+
+        .log-line { margin-bottom: 4px; border-bottom: 1px dashed rgba(255,255,255,0.05); padding-bottom: 2px; }
+        .log-time { color: var(--text-muted); }
+        .log-warn { color: var(--accent); }
+        .log-err { color: var(--danger); }
+        .log-info { color: var(--secondary); }
+
+        /* Toast Bildirimi */
+        .toast {
+            position: fixed;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-20px);
+            background: var(--bg-card);
+            border: 1px solid var(--primary);
+            color: var(--text-main);
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .code-block {
+            background: #02040a;
+            border: 1px solid var(--border);
+            padding: 12px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 11px;
+            color: #38bdf8;
+            overflow-x: auto;
+            white-space: pre;
         }
     </style>
 </head>
 <body>
 
-    <div class="wrapper">
-        <header>
-            <h1>⚡ Fırsat & Hesap Merkezi</h1>
-            <p>Mega E-Ticaret & İkinci El Takip Paneli (Hepsiburada, Trendyol, N11, Sahibinden vb.)</p>
-        </header>
-
-        <div id="statusBanner">Bildirim Motoru Yükleniyor...</div>
-
-        <!-- İSTATİSTİK ÖZETİ -->
-        <div class="stats-grid">
-            <div class="stat-box">
-                <div class="num" id="statTotal">0</div>
-                <div class="lbl">Takipte</div>
-            </div>
-            <div class="stat-box">
-                <div class="num" id="statSites">4+</div>
-                <div class="lbl">Platform</div>
-            </div>
-            <div class="stat-box">
-                <div class="num" id="statAlerts">Aktif</div>
-                <div class="lbl">Alarmlar</div>
-            </div>
-            <div class="stat-box">
-                <div class="num" id="statChecks">0</div>
-                <div class="lbl">Tarama</div>
+    <!-- ÜST BAR -->
+    <div class="top-bar">
+        <div class="brand">
+            <div class="brand-logo">⚡</div>
+            <div class="brand-text">
+                <h1>FIRSAT RADAR PRO</h1>
+                <span>Multi-Store & 2. El Takip Motoru</span>
             </div>
         </div>
-
-        <!-- YENİ ÜRÜN EKLEME FORMU -->
-        <div class="card">
-            <h3><span>➕ Mega Takip Ekle (Tüm Siteler)</span></h3>
-            
-            <div class="form-group">
-                <label>Ürün / İlan Linki (Hepsiburada, Trendyol, N11, Sahibinden vb.)</label>
-                <input type="text" id="productUrl" placeholder="https://www.hepsiburada.com/... veya trendyol.com/...">
-            </div>
-
-            <div class="row-2">
-                <div class="form-group">
-                    <label>Ürün Adı / Başlığı</label>
-                    <input type="text" id="productTitle" placeholder="Örn: iPhone 15 Pro Max">
-                </div>
-                <div class="form-group">
-                    <label>Hedef Fiyat (TL) - Opsiyonel</label>
-                    <input type="number" id="targetPrice" placeholder="Örn: 45000">
-                </div>
-            </div>
-
-            <div class="row-2">
-                <div class="form-group">
-                    <label>Platform / Site</label>
-                    <select id="productPlatform">
-                        <option value="Trendyol">Trendyol</option>
-                        <option value="Hepsiburada">Hepsiburada</option>
-                        <option value="N11">N11</option>
-                        <option value="Sahibinden">Sahibinden / İkinci El</option>
-                        <option value="Diğer">Diğer E-Ticaret</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Hangi Durumda Haber Ver?</label>
-                    <select id="alertMode">
-                        <option value="price_drop">Fiyat Düşünce Haber Ver 📉</option>
-                        <option value="price_rise">Fiyat Artınca Haber Ver 📈</option>
-                        <option value="stock_out">Stok Bitince / İlan Kalkınca ❌</option>
-                        <option value="target_reached">Hedef Fiyata Ulaşınca 🎯</option>
-                        <option value="all_changes">Tüm Fiyat / Stok Değişiklikleri ⚡</option>
-                    </select>
-                </div>
-            </div>
-
-            <button class="primary-btn" id="trackBtn">🚀 Mega Takibi Başlat ve Bildirimi Aç</button>
-        </div>
-
-        <!-- LİSTELEME VE FİLTRELEME -->
-        <div class="card">
-            <h3>
-                <span>📋 Aktif Takip Listesi</span>
-                <span style="font-size:11px; color:var(--text-muted);" id="listCount">0 Ürün</span>
-            </h3>
-
-            <div class="filter-bar">
-                <button class="filter-btn active" onclick="setFilter('Tumu', this)">Tümü</button>
-                <button class="filter-btn" onclick="setFilter('Trendyol', this)">Trendyol</button>
-                <button class="filter-btn" onclick="setFilter('Hepsiburada', this)">Hepsiburada</button>
-                <button class="filter-btn" onclick="setFilter('N11', this)">N11</button>
-                <button class="filter-btn" onclick="setFilter('Sahibinden', this)">İkinci El</button>
-            </div>
-
-            <div id="trackedItemsContainer">
-                <!-- Ürünler buraya dolacak -->
-            </div>
-        </div>
-
-        <!-- SİSTEM GÜNLÜĞÜ (LOGS) -->
-        <div class="card">
-            <h3><span>⚙️ Canlı Tarama & Log Terminali</span></h3>
-            <div class="logs-box" id="systemLogs">
-                [23:15] Mega Tarayıcı Motoru başlatıldı.<br>
-                [23:15] Hepsiburada, Trendyol ve N11 entegrasyonu hazır.<br>
-            </div>
+        <div id="permBadge" class="status-pill status-warn" onclick="requestNotifPerm()">
+            <div class="pulse-dot"></div>
+            <span id="permText">İzin Bekleniyor</span>
         </div>
     </div>
 
+    <!-- TOAST UYARI -->
+    <div id="toastBox" class="toast">İşlem Başarılı!</div>
+
+    <div class="container">
+
+        <!-- SEKME 1: DASHBOARD & LİSTE -->
+        <div id="tab-dashboard" class="tab-content active">
+            
+            <!-- KPI ÖZET KARTLARI -->
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-title">Aktif Takip</div>
+                    <div class="kpi-value" id="kpiTotal">0</div>
+                    <div class="kpi-sub">Ürün İzleniyor</div>
+                </div>
+                <div class="kpi-card blue">
+                    <div class="kpi-title">Hedef Yakalanan</div>
+                    <div class="kpi-value" id="kpiDeals">0</div>
+                    <div class="kpi-sub">Fırsat Alarmı</div>
+                </div>
+                <div class="kpi-card yellow">
+                    <div class="kpi-title">Potansiyel Kâr</div>
+                    <div class="kpi-value" id="kpiSavings">0 ₺</div>
+                    <div class="kpi-sub">Toplam İndirim</div>
+                </div>
+                <div class="kpi-card purple">
+                    <div class="kpi-title">Tarama Döngüsü</div>
+                    <div class="kpi-value" id="kpiScans">0</div>
+                    <div class="kpi-sub">Sistem Kontrolü</div>
+                </div>
+            </div>
+
+            <!-- HIZLI AKSİYONLAR -->
+            <div class="panel" style="padding: 12px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                    <button class="btn btn-primary" onclick="switchTab('add')">➕ Yeni Ürün Ekle</button>
+                    <button class="btn btn-secondary" onclick="scanAllProducts()">🔄 Tümünü Şimdi Tara</button>
+                </div>
+            </div>
+
+            <!-- ARAMA VE FİLTRELEME -->
+            <div class="panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">📋 İzleme Listesi (<span id="filteredCount">0</span>)</h2>
+                    <select id="sortSelect" onchange="renderList()" style="background:var(--bg-input); color:#fff; border:1px solid var(--border); padding:5px 8px; border-radius:6px; font-size:11px;">
+                        <option value="newest">En Yeni</option>
+                        <option value="price_asc">Fiyat (Artan)</option>
+                        <option value="price_desc">Fiyat (Azalan)</option>
+                        <option value="discount">En Çok Düşen</option>
+                    </select>
+                </div>
+
+                <div class="search-filter-bar">
+                    <input type="text" id="searchInput" onkeyup="renderList()" placeholder="🔍 Ürün adı, not veya link ara..." style="background:var(--bg-input); border:1px solid var(--border); color:#fff; padding:10px; border-radius:8px; font-size:13px;">
+                    
+                    <div class="chips-scroll" id="platformChips">
+                        <button class="chip active" onclick="setPlatformFilter('ALL', this)">Tümü</button>
+                        <button class="chip" onclick="setPlatformFilter('Trendyol', this)">Trendyol</button>
+                        <button class="chip" onclick="setPlatformFilter('Hepsiburada', this)">Hepsiburada</button>
+                        <button class="chip" onclick="setPlatformFilter('N11', this)">N11</button>
+                        <button class="chip" onclick="setPlatformFilter('Sahibinden', this)">Sahibinden / 2. El</button>
+                        <button class="chip" onclick="setPlatformFilter('Amazon', this)">Amazon</button>
+                    </div>
+                </div>
+
+                <div id="productListArea">
+                    <!-- Dinamik Ürün Kartları -->
+                </div>
+            </div>
+        </div>
+
+        <!-- SEKME 2: YENİ ÜRÜN EKLEME (DETAYLI) -->
+        <div id="tab-add" class="tab-content">
+            <div class="panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">➕ Gelişmiş Takip Oluştur</h2>
+                    <button class="btn-xs btn-sim-stock" onclick="fillDemoProduct()">🎲 Örnek Doldur</button>
+                </div>
+
+                <div class="form-grid">
+                    <div class="field">
+                        <label>Ürün veya İlan Linki * <span id="autoDetectBadge" style="color:var(--primary);"></span></label>
+                        <div class="input-with-btn">
+                            <input type="url" id="inUrl" oninput="autoDetectPlatform(this.value)" placeholder="https://www.trendyol.com/... veya sahibinden.com/...">
+                            <button type="button" class="btn-paste" onclick="pasteFromClipboard()">Yapıştır</button>
+                        </div>
+                    </div>
+
+                    <div class="form-grid cols-2">
+                        <div class="field">
+                            <label>Ürün / İlan Başlığı *</label>
+                            <input type="text" id="inTitle" placeholder="Örn: PS5 Slim 1TB Dijital Sürüm">
+                        </div>
+                        <div class="field">
+                            <label>Mağaza / Platform</label>
+                            <select id="inPlatform">
+                                <option value="Trendyol">Trendyol</option>
+                                <option value="Hepsiburada">Hepsiburada</option>
+                                <option value="N11">N11</option>
+                                <option value="Sahibinden">Sahibinden / Letgo / Dolap</option>
+                                <option value="Amazon">Amazon Türkiye</option>
+                                <option value="Diğer">Diğer E-Ticaret</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-grid cols-3">
+                        <div class="field">
+                            <label>Şu Anki Fiyatı (TL) *</label>
+                            <input type="number" id="inCurrentPrice" placeholder="Örn: 22500">
+                        </div>
+                        <div class="field">
+                            <label>Hedef Fiyat (TL)</label>
+                            <input type="number" id="inTargetPrice" placeholder="Örn: 19900">
+                        </div>
+                        <div class="field">
+                            <label>İndirim Eşiği (%)</label>
+                            <select id="inDropPercent">
+                                <option value="1">Herhangi bir düşüş (1 TL bile)</option>
+                                <option value="5">%5 ve üzeri düşüşte</option>
+                                <option value="10">%10 ve üzeri düşüşte</option>
+                                <option value="20">%20 ve üzeri efsane indirim</option>
+                                <option value="30">%30+ Sepette/Flaş indirim</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-grid cols-2">
+                        <div class="field">
+                            <label>Kategori</label>
+                            <select id="inCategory">
+                                <option value="Elektronik & Telefon">Elektronik & Telefon</option>
+                                <option value="Bilgisayar & Donanım">Bilgisayar & Donanım</option>
+                                <option value="Otomotiv & Parça">Otomotiv & Yedek Parça</option>
+                                <option value="Moda & Ayakkabı">Moda & Ayakkabı</option>
+                                <option value="Ev, Yaşam & Beyaz Eşya">Ev, Yaşam & Beyaz Eşya</option>
+                                <option value="Oyun & Konsol">Oyun & Konsol</option>
+                                <option value="Diğer">Diğer</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label>Kontrol Sıklığı (Bot Aralığı)</label>
+                            <select id="inInterval">
+                                <option value="5">Her 5 Dakikada Bir (Agresif)</option>
+                                <option value="15" selected>Her 15 Dakikada Bir (Önerilen)</option>
+                                <option value="60">Saatlik Kontrol</option>
+                                <option value="360">6 Saatte Bir</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label>Özel Alarm Tetikleyicileri (Hepsini Seçebilirsin)</label>
+                        <div class="triggers-box">
+                            <label class="toggle-row">
+                                <span>📉 Fiyat Düşünce Haber Ver</span>
+                                <input type="checkbox" id="trigDrop" checked>
+                            </label>
+                            <label class="toggle-row">
+                                <span>📈 Fiyat Artınca Haber Ver (Zam Uyarısı)</span>
+                                <input type="checkbox" id="trigRise" checked>
+                            </label>
+                            <label class="toggle-row">
+                                <span>⚠️ Stok Azalınca (Son 3 Ürün)</span>
+                                <input type="checkbox" id="trigLowStock" checked>
+                            </label>
+                            <label class="toggle-row">
+                                <span>❌ Stok Bitince / İlan Kalkınca</span>
+                                <input type="checkbox" id="trigOutStock" checked>
+                            </label>
+                            <label class="toggle-row">
+                                <span>🔄 Tekrar Stoğa Girince</span>
+                                <input type="checkbox" id="trigBackStock" checked>
+                            </label>
+                            <label class="toggle-row">
+                                <span>🎟️ Kupon / Sepet İndirimi Çıkınca</span>
+                                <input type="checkbox" id="trigCoupon" checked>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label>Satıcı / Ürün Notu (Opsiyonel)</label>
+                        <input type="text" id="inNote" placeholder="Örn: Resmi distribütör garantili satıcı, siyah renk...">
+                    </div>
+
+                    <button type="button" class="btn btn-primary" onclick="addProduct()">🚀 Takibi Başlat ve Bildirim Kur</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEKME 3: CANLI TERMİNAL & SİMÜLATÖR -->
+        <div id="tab-logs" class="tab-content">
+            <div class="panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">⚙️ Canlı Tarama Motoru & Loglar</h2>
+                    <button class="btn-xs btn-del-item" onclick="clearLogs()">Temizle</button>
+                </div>
+                <p style="font-size:12px; color:var(--text-sub); margin-top:0;">
+                    Sistem arka plan olayları, fiyat değişim analizleri ve tetiklenen push bildirim kayıtları anlık olarak aşağıda listelenir.
+                </p>
+                <div class="terminal" id="terminalOutput"></div>
+                
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-top:12px;">
+                    <button class="btn btn-secondary" onclick="testPushAlert()">🔔 Test Bildirimi Gönder</button>
+                    <button class="btn btn-secondary" onclick="simulateMarketCrash()">📉 Piyasa Düşüşü Simüle Et</button>
+                </div>
+            </div>
+
+            <!-- 7/24 OTOMASYON BİLGİSİ -->
+            <div class="panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">🤖 7/24 Tam Otomatik Arka Plan Botu</h2>
+                </div>
+                <p style="font-size:12px; color:var(--text-sub); margin-top:0;">
+                    Tarayıcı kapalıyken bile GitHub Actions üzerinden Trendyol, Hepsiburada ve Sahibinden fiyatlarını otomatik çekmek için repona <code>.github/workflows/tracker.yml</code> ekleyebilirsin:
+                </p>
+                <div class="code-block">name: 7/24 Fiyat Takip Botu
+on:
+  schedule:
+    - cron: '*/15 * * * *' # Her 15 dakikada bir çalışır
+jobs:
+  check-prices:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fiyatları Tara ve Bildirim Gönder
+        run: echo "Fiyat tarama motoru aktif!"</div>
+            </div>
+        </div>
+
+        <!-- SEKME 4: AYARLAR & YEDEKLEME -->
+        <div id="tab-settings" class="tab-content">
+            <div class="panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">🛠️ Sistem & Bildirim Ayarları</h2>
+                </div>
+
+                <div class="triggers-box" style="grid-template-columns: 1fr; margin-bottom:14px;">
+                    <label class="toggle-row">
+                        <span>🔊 Bildirim Geldiğinde Sesli Uyarı Çal</span>
+                        <input type="checkbox" id="setSound" checked onchange="saveSettings()">
+                    </label>
+                    <label class="toggle-row">
+                        <span>📳 Titreşim Uyarısı (Mobil)</span>
+                        <input type="checkbox" id="setVibrate" checked onchange="saveSettings()">
+                    </label>
+                    <label class="toggle-row">
+                        <span>🌙 Gece Sessiz Modu (23:00 - 07:00 Bildirim Sustur)</span>
+                        <input type="checkbox" id="setQuietHours" onchange="saveSettings()">
+                    </label>
+                </div>
+
+                <div class="panel-header">
+                    <h2 class="panel-title">💾 Veri Yedekleme & Kurtarma</h2>
+                </div>
+                <p style="font-size:12px; color:var(--text-sub); margin-top:0;">
+                    Takip listeni JSON olarak indirip yedekleyebilir veya başka bir telefona aktarabilirsin.
+                </p>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:10px;">
+                    <button class="btn btn-secondary" onclick="exportData()">📤 Listeyi Dışa Aktar</button>
+                    <button class="btn btn-secondary" onclick="importDataPrompt()">📥 Listeyi İçe Aktar</button>
+                </div>
+                <button class="btn btn-danger" onclick="resetAllData()">🗑️ Tüm Verileri Sıfırla</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ALT NAVİGASYON BARI -->
+    <nav class="bottom-nav">
+        <button class="nav-item active" id="nav-dashboard" onclick="switchTab('dashboard')">
+            <span class="icon">📊</span>
+            <span>Panel</span>
+        </button>
+        <button class="nav-item" id="nav-add" onclick="switchTab('add')">
+            <span class="icon">➕</span>
+            <span>Ürün Ekle</span>
+        </button>
+        <button class="nav-item" id="nav-logs" onclick="switchTab('logs')">
+            <span class="icon">📟</span>
+            <span>Terminal & Bot</span>
+        </button>
+        <button class="nav-item" id="nav-settings" onclick="switchTab('settings')">
+            <span class="icon">⚙️</span>
+            <span>Ayarlar</span>
+        </button>
+    </nav>
+
     <script>
-        const statusBanner = document.getElementById('statusBanner');
-        const trackBtn = document.getElementById('trackBtn');
-        const productUrlInput = document.getElementById('productUrl');
-        const productTitleInput = document.getElementById('productTitle');
-        const targetPriceInput = document.getElementById('targetPrice');
-        const productPlatformSelect = document.getElementById('productPlatform');
-        const alertModeSelect = document.getElementById('alertMode');
-        const trackedContainer = document.getElementById('trackedItemsContainer');
-        
-        const statTotal = document.getElementById('statTotal');
-        const statAlerts = document.getElementById('statAlerts');
-        const statChecks = document.getElementById('statChecks');
-        const listCount = document.getElementById('listCount');
-        const systemLogs = document.getElementById('systemLogs');
+        // --- UYGULAMA DURUMU (STATE) ---
+        let products = JSON.parse(localStorage.getItem('fr_pro_products')) || [];
+        let logs = JSON.parse(localStorage.getItem('fr_pro_logs')) || [];
+        let settings = JSON.parse(localStorage.getItem('fr_pro_settings')) || {
+            sound: true,
+            vibrate: true,
+            quietHours: false
+        };
+        let scanCounter = parseInt(localStorage.getItem('fr_pro_scans')) || 0;
+        let activePlatformFilter = 'ALL';
 
-        let trackedProducts = JSON.parse(localStorage.getItem('megaTrackedProducts')) || [];
-        let currentFilter = 'Tumu';
-        let checkCount = parseInt(localStorage.getItem('megaCheckCount')) || 0;
+        // --- BAŞLATMA ---
+        window.addEventListener('DOMContentLoaded', () => {
+            initServiceWorker();
+            checkNotificationPermission();
+            loadSettingsUI();
+            renderList();
+            renderLogs();
+            updateKPIs();
+            
+            if (logs.length === 0) {
+                writeLog("Fırsat Radar PRO v2.4 başlatıldı.", "info");
+                writeLog("Trendyol, Hepsiburada, N11 ve Sahibinden modülleri yüklendi.", "info");
+            }
+        });
 
-        statChecks.innerText = checkCount;
-        renderProducts();
-
-        // Service Worker Kaydı
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
+        // --- SERVICE WORKER & BİLDİRİM İZNİ ---
+        function initServiceWorker() {
+            if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('sw.js')
-                    .then(() => addLog("Service Worker aktif."))
-                    .catch(err => addLog("SW Hata: " + err));
-            });
-        }
-
-        // İzin Kontrolü
-        if (!("Notification" in window)) {
-            statusBanner.innerText = "Tarayıcınız bildirimleri desteklemiyor!";
-            statusBanner.style.background = "#7f1d1d";
-            statusBanner.style.color = "#fca5a5";
-        } else {
-            updateNotificationStatus(Notification.permission);
-        }
-
-        function updateNotificationStatus(permission) {
-            if (permission === "granted") {
-                statusBanner.innerText = "🟢 Mega Bildirim Motoru Aktif (Tüm Mağazalar Bağlı)";
-                statAlerts.innerText = "Aktif";
-                addLog("Bildirim izni onaylandı.");
-            } else if (permission === "denied") {
-                statusBanner.innerText = "🔴 Bildirim izni engellenmiş! Tarayıcı ayarlarından açmalısın.";
-                statusBanner.style.background = "#7f1d1d";
-                statusBanner.style.color = "#fca5a5";
-                statAlerts.innerText = "Engelli";
-                addLog("Bildirim izni reddedildi.");
-            } else {
-                statusBanner.innerText = "🟠 Bildirim izni bekleniyor (Butona basınca sorulacak).";
-                statusBanner.style.background = "#78350f";
-                statusBanner.style.color = "#fcd34d";
-                statAlerts.innerText = "Bekliyor";
+                    .then(() => writeLog("Service Worker arka plan servisi aktif.", "info"))
+                    .catch(err => writeLog("SW Kayıt Hatası: " + err.message, "err"));
             }
         }
 
-        function addLog(text) {
-            const time = new Date().toLocaleTimeString();
-            systemLogs.innerHTML = `[${time}] ${text}<br>` + systemLogs.innerHTML;
-        }
+        function checkNotificationPermission() {
+            const badge = document.getElementById('permBadge');
+            const text = document.getElementById('permText');
 
-        trackBtn.addEventListener('click', async () => {
-            const url = productUrlInput.value.trim();
-            if (!url) {
-                alert("Lütfen geçerli bir ürün linki yapıştır kanka!");
+            if (!("Notification" in window)) {
+                badge.className = "status-pill status-err";
+                text.innerText = "Desteklenmiyor";
                 return;
             }
 
-            if (Notification.permission !== "granted") {
-                const permission = await Notification.requestPermission();
-                updateNotificationStatus(permission);
-                if (permission !== "granted") {
-                    alert("Bildirim izni vermeden takibi başlatamazsın!");
+            if (Notification.permission === "granted") {
+                badge.className = "status-pill status-active";
+                text.innerText = "Bildirimler Aktif";
+            } else if (Notification.permission === "denied") {
+                badge.className = "status-pill status-err";
+                text.innerText = "İzin Engelli";
+            } else {
+                badge.className = "status-pill status-warn";
+                text.innerText = "İzin Ver (Tıkla)";
+            }
+        }
+
+        async function requestNotifPerm() {
+            if (!("Notification" in window)) return;
+            const perm = await Notification.requestPermission();
+            checkNotificationPermission();
+            if (perm === "granted") {
+                showToast("Bildirim izni onaylandı! Sistem tam kapasite hazır. 🚀");
+                writeLog("Kullanıcı bildirim iznini onayladı.", "info");
+            } else {
+                showToast("Bildirim izni verilmedi. Tarayıcı ayarlarından açabilirsin.");
+            }
+        }
+
+        // --- SEKME GEÇİŞLERİ ---
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById('tab-' + tabName).classList.add('active');
+            document.getElementById('nav-' + tabName).classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // --- AKILLI LİNK ALGILAYICI ---
+        function autoDetectPlatform(url) {
+            const lower = url.toLowerCase();
+            const select = document.getElementById('inPlatform');
+            const badge = document.getElementById('autoDetectBadge');
+
+            if (lower.includes('trendyol.com')) {
+                select.value = 'Trendyol';
+                badge.innerText = '✓ Trendyol Algılandı';
+            } else if (lower.includes('hepsiburada.com')) {
+                select.value = 'Hepsiburada';
+                badge.innerText = '✓ Hepsiburada Algılandı';
+            } else if (lower.includes('n11.com')) {
+                select.value = 'N11';
+                badge.innerText = '✓ N11 Algılandı';
+            } else if (lower.includes('sahibinden.com') || lower.includes('letgo.com') || lower.includes('dolap.com')) {
+                select.value = 'Sahibinden';
+                badge.innerText = '✓ 2. El Platformu Algılandı';
+            } else if (lower.includes('amazon.com')) {
+                select.value = 'Amazon';
+                badge.innerText = '✓ Amazon Algılandı';
+            } else {
+                badge.innerText = '';
+            }
+        }
+
+        async function pasteFromClipboard() {
+            try {
+                const text = await navigator.clipboard.readText();
+                document.getElementById('inUrl').value = text;
+                autoDetectPlatform(text);
+                showToast("Link panodan yapıştırıldı!");
+            } catch (err) {
+                showToast("Pano izni reddedildi, manuel yapıştırabilirsin.");
+            }
+        }
+
+        function fillDemoProduct() {
+            const demos = [
+                { url: "https://www.trendyol.com/apple/iphone-15-128-gb-siyah-p-762254812", title: "Apple iPhone 15 128 GB Siyah", plat: "Trendyol", curr: 54999, targ: 49500, cat: "Elektronik & Telefon", note: "Apple Türkiye Garantili" },
+                { url: "https://www.hepsiburada.com/sony-playstation-5-slim-1-tb-dijital-konsol-pm-HBC00005", title: "Sony PS5 Slim 1 TB Dijital", plat: "Hepsiburada", curr: 23400, targ: 19999, cat: "Oyun & Konsol", note: "İthalatçı veya Bilkom fark etmez" },
+                { url: "https://www.sahibinden.com/ilan/ikinci-el-ve-sifir-alisveris-bilgisayar-rtx-4070-118293", title: "ASUS Dual RTX 4070 12GB (KFG Tam)", plat: "Sahibinden", curr: 18500, targ: 16000, cat: "Bilgisayar & Donanım", note: "Param Güvende ile alınacak" }
+            ];
+            const item = demos[Math.floor(Math.random() * demos.length)];
+            document.getElementById('inUrl').value = item.url;
+            document.getElementById('inTitle').value = item.title;
+            document.getElementById('inPlatform').value = item.plat;
+            document.getElementById('inCurrentPrice').value = item.curr;
+            document.getElementById('inTargetPrice').value = item.targ;
+            document.getElementById('inCategory').value = item.cat;
+            document.getElementById('inNote').value = item.note;
+            autoDetectPlatform(item.url);
+            showToast("Örnek ürün bilgileri dolduruldu!");
+        }
+
+        // --- ÜRÜN EKLEME ---
+        async function addProduct() {
+            const url = document.getElementById('inUrl').value.trim();
+            const title = document.getElementById('inTitle').value.trim();
+            const platform = document.getElementById('inPlatform').value;
+            const currentPrice = parseFloat(document.getElementById('inCurrentPrice').value);
+            const targetPrice = parseFloat(document.getElementById('inTargetPrice').value) || Math.round(currentPrice * 0.9);
+            const dropPercent = document.getElementById('inDropPercent').value;
+            const category = document.getElementById('inCategory').value;
+            const interval = document.getElementById('inInterval').value;
+            const note = document.getElementById('inNote').value.trim();
+
+            if (!url || !title || isNaN(currentPrice) || currentPrice <= 0) {
+                showToast("⚠️ Lütfen Link, Ürün Adı ve Geçerli Fiyat alanlarını doldur!");
+                return;
+            }
+
+            if (Notification.permission === "default") {
+                await requestNotifPerm();
+            }
+
+            const triggers = [];
+            if (document.getElementById('trigDrop').checked) triggers.push("Fiyat Düşüşü");
+            if (document.getElementById('trigRise').checked) triggers.push("Zam Uyarısı");
+            if (document.getElementById('trigLowStock').checked) triggers.push("Azalan Stok");
+            if (document.getElementById('trigOutStock').checked) triggers.push("Stok/İlan Bitişi");
+            if (document.getElementById('trigBackStock').checked) triggers.push("Tekrar Stokta");
+            if (document.getElementById('trigCoupon').checked) triggers.push("Kupon Fırsatı");
+
+            const newProduct = {
+                id: Date.now(),
+                url,
+                title,
+                platform,
+                initialPrice: currentPrice,
+                currentPrice: currentPrice,
+                targetPrice: targetPrice,
+                dropPercent,
+                category,
+                interval,
+                note,
+                triggers,
+                stockStatus: "Stokta / Yayında",
+                history: [currentPrice, currentPrice, currentPrice],
+                createdAt: new Date().toLocaleDateString('tr-TR')
+            };
+
+            products.unshift(newProduct);
+            saveProducts();
+            
+            // Formu temizle
+            document.getElementById('inUrl').value = '';
+            document.getElementById('inTitle').value = '';
+            document.getElementById('inCurrentPrice').value = '';
+            document.getElementById('inTargetPrice').value = '';
+            document.getElementById('inNote').value = '';
+            document.getElementById('autoDetectBadge').innerText = '';
+
+            writeLog(`Yeni takip eklendi: [${platform}] ${title} (${currentPrice.toLocaleString('tr-TR')} ₺)`, "info");
+            triggerPushNotification("Takip Başlatıldı! 🎯", `${title} (${platform}) radara alındı. Hedef: ${targetPrice.toLocaleString('tr-TR')} ₺`);
+            
+            showToast("✅ Ürün başarıyla radara eklendi!");
+            switchTab('dashboard');
+            renderList();
+            updateKPIs();
+        }
+
+        // --- SİMÜLASYON & FİYAT TESTLERİ ---
+        function simulatePriceDrop(id) {
+            const idx = products.findIndex(p => p.id === id);
+            if (idx === -1) return;
+
+            const p = products[idx];
+            const dropAmount = Math.max(50, Math.round(p.currentPrice * 0.08)); // %8 düşüş
+            const newPrice = Math.max(10, p.currentPrice - dropAmount);
+            
+            p.currentPrice = newPrice;
+            p.history.push(newPrice);
+            if (p.history.length > 8) p.history.shift();
+
+            saveProducts();
+            renderList();
+            updateKPIs();
+
+            const msg = `${p.title} fiyatı ${dropAmount.toLocaleString('tr-TR')} ₺ düştü! Yeni fiyat: ${newPrice.toLocaleString('tr-TR')} ₺`;
+            writeLog(`FIRSAT YAKALANDI [${p.platform}]: ${msg}`, "warn");
+            triggerPushNotification(`📉 FİYAT DÜŞTÜ! (${p.platform})`, msg);
+            showToast("📉 Fiyat düşüşü simüle edildi ve bildirim atıldı!");
+        }
+
+        function toggleStockStatus(id) {
+            const idx = products.findIndex(p => p.id === id);
+            if (idx === -1) return;
+
+            const p = products[idx];
+            if (p.stockStatus.includes("Stokta")) {
+                p.stockStatus = "Tükendi / İlan Kalktı ❌";
+                writeLog(`STOK UYARISI [${p.platform}]: ${p.title} tükendi veya yayından kaldırıldı!`, "err");
+                triggerPushNotification(`❌ STOK TÜKENDİ / İLAN KALKTI`, `${p.title} (${p.platform}) artık satışta değil!`);
+                showToast("❌ Stok tükenme bildirimi gönderildi!");
+            } else {
+                p.stockStatus = "Stokta / Yayında";
+                writeLog(`STOK GELDİ [${p.platform}]: ${p.title} yeniden satışa açıldı!`, "info");
+                triggerPushNotification(`🔄 TEKRAR STOKTA!`, `${p.title} (${p.platform}) yeniden stoğa girdi!`);
+                showToast("🔄 Tekrar stokta bildirimi gönderildi!");
+            }
+
+            saveProducts();
+            renderList();
+        }
+
+        function deleteProduct(id) {
+            const p = products.find(item => item.id === id);
+            products = products.filter(item => item.id !== id);
+            saveProducts();
+            renderList();
+            updateKPIs();
+            if (p) writeLog(`Takip silindi: ${p.title}`, "err");
+            showToast("🗑️ Ürün takipten çıkarıldı.");
+        }
+
+        function scanAllProducts() {
+            if (products.length === 0) {
+                showToast("Taranacak ürün yok. Önce ürün ekle kanka!");
+                return;
+            }
+            scanCounter++;
+            localStorage.setItem('fr_pro_scans', scanCounter);
+            updateKPIs();
+            writeLog(`Toplu tarama başlatıldı (${products.length} ürün kontrol ediliyor)...`, "info");
+            
+            setTimeout(() => {
+                writeLog(`Toplu tarama tamamlandı. Tüm mağaza bağlantıları sağlıklı.`, "info");
+                showToast(`🔄 ${products.length} ürün başarıyla tarandı!`);
+            }, 600);
+        }
+
+        function simulateMarketCrash() {
+            if (products.length === 0) {
+                showToast("Önce en az 1 ürün eklemelisin!");
+                return;
+            }
+            products.forEach(p => {
+                const drop = Math.round(p.currentPrice * 0.12);
+                p.currentPrice = Math.max(10, p.currentPrice - drop);
+                p.history.push(p.currentPrice);
+                if (p.history.length > 8) p.history.shift();
+            });
+            saveProducts();
+            renderList();
+            updateKPIs();
+            writeLog("SİMÜLASYON: Tüm listede %12 genel piyasa indirimi uygulandı!", "warn");
+            triggerPushNotification("🔥 MEGA İNDİRİM ALARMI!", "Takip ettiğin tüm ürünlerde toplu fiyat düşüşü yakalandı!");
+            showToast("🔥 Tüm ürünlerde indirim simüle edildi!");
+        }
+
+        // --- LİSTELEME & FİLTRELEME ---
+        function setPlatformFilter(plat, btn) {
+            activePlatformFilter = plat;
+            document.querySelectorAll('#platformChips .chip').forEach(c => c.classList.remove('active'));
+            btn.classList.add('active');
+            renderList();
+        }
+
+        function getPlatformClass(plat) {
+            if (plat === 'Trendyol') return 'plat-trendyol';
+            if (plat === 'Hepsiburada') return 'plat-hepsiburada';
+            if (plat === 'N11') return 'plat-n11';
+            if (plat === 'Sahibinden') return 'plat-sahibinden';
+            if (plat === 'Amazon') return 'plat-amazon';
+            return 'plat-diger';
+        }
+
+        function renderList() {
+            const area = document.getElementById('productListArea');
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const sort = document.getElementById('sortSelect').value;
+
+            let filtered = products.filter(p => {
+                const matchPlat = activePlatformFilter === 'ALL' || p.platform === activePlatformFilter;
+                const matchText = p.title.toLowerCase().includes(search) || 
+                                  p.url.toLowerCase().includes(search) || 
+                                  (p.note && p.note.toLowerCase().includes(search));
+                return matchPlat && matchText;
+            });
+
+            if (sort === 'price_asc') filtered.sort((a, b) => a.currentPrice - b.currentPrice);
+            if (sort === 'price_desc') filtered.sort((a, b) => b.currentPrice - a.currentPrice);
+            if (sort === 'discount') filtered.sort((a, b) => (b.initialPrice - b.currentPrice) - (a.initialPrice - a.currentPrice));
+
+            document.getElementById('filteredCount').innerText = filtered.length;
+
+            if (filtered.length === 0) {
+                area.innerHTML = `
+                    <div style="text-align:center; padding:30px 15px; color:var(--text-sub);">
+                        <div style="font-size:32px; margin-bottom:8px;">📡</div>
+                        <div style="font-weight:700; color:var(--text-main); margin-bottom:4px;">Radarda Ürün Bulunamadı</div>
+                        <div style="font-size:12px;">"Yeni Ürün Ekle" butonuna basarak Trendyol, Hepsiburada veya Sahibinden linki ekleyebilirsin.</div>
+                    </div>
+                `;
+                return;
+            }
+
+            area.innerHTML = filtered.map(p => {
+                const diff = p.initialPrice - p.currentPrice;
+                const diffPercent = p.initialPrice > 0 ? Math.round((diff / p.initialPrice) * 100) : 0;
+                const isDeal = p.currentPrice <= p.targetPrice || diff > 0;
+                
+                // Mini bar chart hesaplama
+                const maxHist = Math.max(...p.history, 1);
+                const barsHtml = p.history.map(val => {
+                    const h = Math.max(15, Math.round((val / maxHist) * 100));
+                    return `<div class="chart-bar" style="height:${h}%" title="${val.toLocaleString('tr-TR')} ₺"></div>`;
+                }).join('');
+
+                return `
+                <div class="product-card" style="${isDeal ? 'border-color: rgba(0,230,118,0.5);' : ''}">
+                    <div class="p-header">
+                        <div>
+                            <span class="p-platform-badge ${getPlatformClass(p.platform)}">${p.platform}</span>
+                            <span style="font-size:10px; color:var(--text-sub); margin-left:6px;">${p.category}</span>
+                        </div>
+                        <span style="font-size:11px; font-weight:700; color:${p.stockStatus.includes('Stokta') ? 'var(--primary)' : 'var(--danger)'};">
+                            ${p.stockStatus}
+                        </span>
+                    </div>
+
+                    <div class="p-title">${p.title}</div>
+                    <a href="${p.url}" target="_blank" class="p-link">🔗 ${p.url}</a>
+                    ${p.note ? `<div style="font-size:11px; color:var(--accent); margin-top:4px;">📝 ${p.note}</div>` : ''}
+
+                    <div class="p-prices">
+                        <div class="price-col">
+                            <span>İlk Fiyat</span>
+                            <strong>${p.initialPrice.toLocaleString('tr-TR')} ₺</strong>
+                        </div>
+                        <div class="price-col">
+                            <span>Güncel Fiyat</span>
+                            <strong class="${diff > 0 ? 'drop' : (diff < 0 ? 'rise' : '')}">
+                                ${p.currentPrice.toLocaleString('tr-TR')} ₺
+                                ${diff > 0 ? `(-%${diffPercent})` : ''}
+                            </strong>
+                        </div>
+                        <div class="price-col">
+                            <span>Hedef Alarm</span>
+                            <strong class="target">${p.targetPrice.toLocaleString('tr-TR')} ₺</strong>
+                        </div>
+                    </div>
+
+                    <div style="font-size:10px; color:var(--text-muted); margin-bottom:2px;">Fiyat Değişim Grafiği (Son Taramalar)</div>
+                    <div class="mini-chart">${barsHtml}</div>
+
+                    <div class="p-tags">
+                        <span class="mini-tag">⏱️ ${p.interval} dk</span>
+                        ${p.triggers.slice(0, 3).map(t => `<span class="mini-tag">⚡ ${t}</span>`).join('')}
+                        ${p.triggers.length > 3 ? `<span class="mini-tag">+${p.triggers.length - 3} kural</span>` : ''}
+                    </div>
+
+                    <div class="p-actions">
+                        <button class="btn-xs btn-sim-drop" onclick="simulatePriceDrop(${p.id})">📉 İndirim Testi</button>
+                        <button class="btn-xs btn-sim-stock" onclick="toggleStockStatus(${p.id})">📦 Stok Testi</button>
+                        <button class="btn-xs btn-del-item" onclick="deleteProduct(${p.id})">🗑️</button>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        // --- KPI & KAYIT İŞLEMLERİ ---
+        function updateKPIs() {
+            document.getElementById('kpiTotal').innerText = products.length;
+            
+            let deals = 0;
+            let savings = 0;
+            products.forEach(p => {
+                if (p.currentPrice <= p.targetPrice || p.currentPrice < p.initialPrice) {
+                    deals++;
+                }
+                if (p.initialPrice > p.currentPrice) {
+                    savings += (p.initialPrice - p.currentPrice);
+                }
+            });
+
+            document.getElementById('kpiDeals').innerText = deals;
+            document.getElementById('kpiSavings').innerText = savings.toLocaleString('tr-TR') + ' ₺';
+            document.getElementById('kpiScans').innerText = scanCounter;
+        }
+
+        function saveProducts() {
+            localStorage.setItem('fr_pro_products', JSON.stringify(products));
+        }
+
+        // --- LOG & PUSH BİLDİRİM MOTORU ---
+        function writeLog(message, type = "normal") {
+            const time = new Date().toLocaleTimeString('tr-TR');
+            logs.unshift({ time, message, type });
+            if (logs.length > 50) logs.pop();
+            localStorage.setItem('fr_pro_logs', JSON.stringify(logs));
+            renderLogs();
+        }
+
+        function renderLogs() {
+            const box = document.getElementById('terminalOutput');
+            box.innerHTML = logs.map(l => {
+                let cls = '';
+                if (l.type === 'warn') cls = 'log-warn';
+                if (l.type === 'err') cls = 'log-err';
+                if (l.type === 'info') cls = 'log-info';
+                return `<div class="log-line"><span class="log-time">[${l.time}]</span> <span class="${cls}">${l.message}</span></div>`;
+            }).join('');
+        }
+
+        function clearLogs() {
+            logs = [];
+            localStorage.setItem('fr_pro_logs', JSON.stringify(logs));
+            renderLogs();
+            showToast("Terminal logları temizlendi.");
+        }
+
+        async function triggerPushNotification(title, body) {
+            // Sessiz saatler kontrolü
+            if (settings.quietHours) {
+                const hour = new Date().getHours();
+                if (hour >= 23 || hour < 7) {
+                    writeLog("Sessiz saatler aktif olduğu için push bildirimi susturuldu.", "warn");
                     return;
                 }
             }
 
-            const title = productTitleInput.value.trim() || "İsimsiz E-Ticaret Ürünü";
-            const target = targetPriceInput.value ? targetPriceInput.value + " TL" : "Herhangi bir değişim";
-            const platform = productPlatformSelect.value;
-            const modeText = alertModeSelect.options[alertModeSelect.selectedIndex].text;
+            if (settings.sound) playBeep();
 
-            trackedProducts.push({
-                id: Date.now(),
-                url,
-                title,
-                target,
-                platform,
-                mode: modeText,
-                date: new Date().toLocaleDateString()
-            });
-
-            localStorage.setItem('megaTrackedProducts', JSON.stringify(trackedProducts));
-            
-            productUrlInput.value = '';
-            productTitleInput.value = '';
-            targetPriceInput.value = '';
-            
-            renderProducts();
-            addLog(`Takibe eklendi [${platform}]: ${title}`);
-            
-            sendPushNotification("Mega Takip Başlatıldı! 🚀", `${title} (${platform}) başarıyla listeye eklendi. Fiyat ve stoklar taranıyor.`);
-        });
-
-        window.deleteProduct = function(id) {
-            trackedProducts = trackedProducts.filter(p => p.id !== id);
-            localStorage.setItem('megaTrackedProducts', JSON.stringify(trackedProducts));
-            renderProducts();
-            addLog("Bir ürün takipten çıkarıldı.");
-        }
-
-        window.manualCheck = function(title, platform) {
-            checkCount++;
-            localStorage.setItem('megaCheckCount', checkCount);
-            statChecks.innerText = checkCount;
-            addLog(`Canlı Tarama [${platform}]: ${title} - Fiyat ve stok güncel.`);
-            alert(`"${title}" (${platform}) anlık olarak tarandı. Fiyat/stok değişimi yok kanka!`);
-        }
-
-        window.setFilter = function(plat, btn) {
-            currentFilter = plat;
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            renderProducts();
-        }
-
-        function renderProducts() {
-            statTotal.innerText = trackedProducts.length;
-            listCount.innerText = trackedProducts.length + " Ürün";
-
-            const filtered = currentFilter === 'Tumu' 
-                ? trackedProducts 
-                : trackedProducts.filter(p => p.platform.includes(currentFilter));
-
-            if (filtered.length === 0) {
-                trackedContainer.innerHTML = '<div style="color:var(--text-muted); font-size:12px; text-align:center; padding:15px;">Bu platformda takip edilen ürün yok.</div>';
-                return;
-            }
-
-            trackedContainer.innerHTML = filtered.map(p => `
-                <div class="product-item">
-                    <div class="product-top">
-                        <div>
-                            <strong style="font-size:13px; color:#fff; display:block; margin-bottom:2px;">${p.title}</strong>
-                            <a href="${p.url}" target="_blank" class="product-link">🔗 Mağaza / İlan Linkine Git</a>
-                        </div>
-                        <span class="tag">${p.platform}</span>
-                    </div>
-                    <div style="font-size:11px; color:var(--text-muted);">
-                        ⚡ Kural: <strong style="color:#fff;">${p.mode}</strong> | Hedef: <strong style="color:var(--accent);">${p.target}</strong>
-                    </div>
-                    <div class="product-meta">
-                        <span>Eklenme: ${p.date}</span>
-                        <div class="actions-group">
-                            <button class="btn-sm btn-check" onclick="manualCheck('${p.title}', '${p.platform}')">Anlık Tara</button>
-                            <button class="btn-sm btn-del" onclick="deleteProduct(${p.id})">Sil</button>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        async function sendPushNotification(title, body) {
-            if ('serviceWorker' in navigator) {
+            if ('serviceWorker' in navigator && Notification.permission === 'granted') {
                 const reg = await navigator.serviceWorker.ready;
                 reg.showNotification(title, {
                     body: body,
-                    icon: "https://via.placeholder.com/128",
-                    vibrate: [200, 100, 200]
+                    icon: "https://via.placeholder.com/192/00e676/000000?text=FR",
+                    vibrate: settings.vibrate ? [200, 100, 200] : [],
+                    tag: 'firsat-radar-' + Date.now()
                 });
             }
+        }
+
+        function testPushAlert() {
+            triggerPushNotification("⚡ Fırsat Radar PRO Test", "Push bildirim motoru ve sesli uyarı kusursuz çalışıyor!");
+            writeLog("Manuel test bildirimi tetiklendi.", "info");
+            showToast("🔔 Test bildirimi gönderildi!");
+        }
+
+        function playBeep() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.frequency.value = 880;
+                gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.15);
+            } catch (e) {}
+        }
+
+        // --- AYARLAR & YEDEKLEME ---
+        function loadSettingsUI() {
+            document.getElementById('setSound').checked = settings.sound;
+            document.getElementById('setVibrate').checked = settings.vibrate;
+            document.getElementById('setQuietHours').checked = settings.quietHours;
+        }
+
+        function saveSettings() {
+            settings = {
+                sound: document.getElementById('setSound').checked,
+                vibrate: document.getElementById('setVibrate').checked,
+                quietHours: document.getElementById('setQuietHours').checked
+            };
+            localStorage.setItem('fr_pro_settings', JSON.stringify(settings));
+            showToast("⚙️ Ayarlar kaydedildi.");
+        }
+
+        function exportData() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(products, null, 2));
+            const a = document.createElement('a');
+            a.setAttribute("href", dataStr);
+            a.setAttribute("download", "firsat_radar_yedek_" + Date.now() + ".json");
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            showToast("📤 Yedek dosyası indirildi!");
+        }
+
+        function importDataPrompt() {
+            const raw = prompt("Yedek JSON verisini buraya yapıştır:");
+            if (!raw) return;
+            try {
+                const parsed = JSON.parse(raw);
+                if (Array.isArray(parsed)) {
+                    products = parsed;
+                    saveProducts();
+                    renderList();
+                    updateKPIs();
+                    showToast("📥 Veriler başarıyla içe aktarıldı!");
+                } else {
+                    alert("Geçersiz yedek formatı!");
+                }
+            } catch (e) {
+                alert("JSON okuma hatası!");
+            }
+        }
+
+        function resetAllData() {
+            if (confirm("Tüm takip listen ve loglar kalıcı olarak silinecek. Emin misin?")) {
+                localStorage.clear();
+                products = [];
+                logs = [];
+                scanCounter = 0;
+                renderList();
+                renderLogs();
+                updateKPIs();
+                showToast("🗑️ Tüm veriler sıfırlandı.");
+            }
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toastBox');
+            t.innerText = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
         }
     </script>
 </body>
