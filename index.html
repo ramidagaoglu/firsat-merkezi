@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#03050a">
-    <meta name="description" content="Gelişmiş Çoklu Mağaza ve İkinci El Fiyat, Stok ve Fırsat Takip Platformu">
-    <title>Fırsat Radar PRO | Enterprise E-Ticaret & 2. El İstihbarat Motoru</title>
+    <meta name="description" content="Fırsat Radar PRO - Çoklu Mağaza ve İkinci El Fiyat, Stok, Kupon ve Zam İstihbarat Platformu">
+    <title>Fırsat Radar PRO | Enterprise Fiyat & Stok İstihbarat Motoru</title>
     <link rel="manifest" href="manifest.json">
     <style>
         /* ==========================================================================
-           1. TEMEL DEĞİŞKENLER VE RENK PALETİ
+           1. TEMEL TASARIM DEĞİŞKENLERİ (DESIGN TOKENS)
            ========================================================================== */
         :root {
             --bg-void: #020409;
@@ -18,6 +18,7 @@
             --bg-card: #121b2e;
             --bg-card-hover: #17233b;
             --bg-input: #1a253c;
+            --bg-modal: #0e1628;
             --border-subtle: #1e2c48;
             --border-strong: #2d426b;
             --primary: #00e676;
@@ -31,20 +32,23 @@
             --danger-glow: rgba(239, 68, 68, 0.25);
             --purple: #a855f7;
             --pink: #ec4899;
+            --orange: #f97316;
             --text-main: #f8fafc;
             --text-sub: #94a3b8;
             --text-muted: #64748b;
+            --radius-xs: 6px;
             --radius-sm: 8px;
             --radius-md: 12px;
             --radius-lg: 16px;
             --radius-xl: 20px;
             --shadow-card: 0 12px 32px -4px rgba(0, 0, 0, 0.75);
+            --shadow-modal: 0 24px 60px rgba(0, 0, 0, 0.92);
             --transition-fast: 0.18s cubic-bezier(0.4, 0, 0.2, 1);
             --transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         /* ==========================================================================
-           2. SIFIRLAMA VE GENEL TİPOGRAFİ
+           2. SIFIRLAMA, KAYDIRMA ÇUBUĞU VE GENEL TİPOGRAFİ
            ========================================================================== */
         *, *::before, *::after {
             box-sizing: border-box;
@@ -60,13 +64,14 @@
             margin: 0;
             padding: 0;
             background-color: var(--bg-void);
-            background-image: 
-                radial-gradient(circle at 15% 10%, rgba(0, 230, 118, 0.04) 0%, transparent 40%),
-                radial-gradient(circle at 85% 30%, rgba(56, 189, 248, 0.04) 0%, transparent 45%);
+            background-image:
+                radial-gradient(circle at 12% 8%, rgba(0, 230, 118, 0.045) 0%, transparent 42%),
+                radial-gradient(circle at 88% 28%, rgba(56, 189, 248, 0.045) 0%, transparent 45%),
+                radial-gradient(circle at 50% 90%, rgba(168, 85, 247, 0.03) 0%, transparent 50%);
             color: var(--text-main);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             line-height: 1.55;
-            padding-bottom: 100px;
+            padding-bottom: 105px;
             overflow-x: hidden;
         }
 
@@ -88,14 +93,23 @@
             background: var(--secondary);
         }
 
+        code {
+            background: rgba(56, 189, 248, 0.12);
+            color: var(--secondary);
+            padding: 2px 6px;
+            border-radius: 5px;
+            font-family: "Courier New", Courier, monospace;
+            font-size: 11px;
+        }
+
         /* ==========================================================================
-           3. ÜST NAVİGASYON BAR (STICKY HEADER)
+           3. ÜST SABİT NAVİGASYON (STICKY HEADER)
            ========================================================================== */
         .app-header {
             position: sticky;
             top: 0;
             z-index: 500;
-            background: rgba(6, 9, 19, 0.92);
+            background: rgba(6, 9, 19, 0.93);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border-bottom: 1px solid var(--border-subtle);
@@ -167,7 +181,50 @@
         }
 
         @media (min-width: 600px) {
-            .live-clock { display: block; }
+            .live-clock {
+                display: block;
+            }
+        }
+
+        .bell-btn {
+            position: relative;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-main);
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 15px;
+            transition: var(--transition-fast);
+        }
+
+        .bell-btn:hover {
+            border-color: var(--secondary);
+        }
+
+        .bell-count {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: var(--danger);
+            color: #fff;
+            font-size: 9px;
+            font-weight: 900;
+            min-width: 16px;
+            height: 16px;
+            border-radius: 999px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 0 4px;
+        }
+
+        .bell-count.show {
+            display: flex;
         }
 
         .perm-badge {
@@ -216,7 +273,7 @@
         }
 
         /* ==========================================================================
-           4. CANLI FIRSAT AKIŞ ŞERİDİ (TICKER)
+           4. CANLI PİYASA AKIŞ ŞERİDİ (TICKER)
            ========================================================================== */
         .ticker-wrap {
             background: var(--bg-panel);
@@ -229,7 +286,7 @@
 
         .ticker-move {
             display: inline-block;
-            animation: tickerScroll 28s linear infinite;
+            animation: tickerScroll 30s linear infinite;
             font-size: 11px;
             font-weight: 700;
             color: var(--text-sub);
@@ -258,10 +315,10 @@
         }
 
         /* ==========================================================================
-           5. ANA KONTEYNER VE SEKME YÖNETİMİ
+           5. ANA KONTEYNER VE SEKME GEÇİŞLERİ
            ========================================================================== */
         .main-wrapper {
-            max-width: 1024px;
+            max-width: 1040px;
             margin: 0 auto;
             padding: 16px;
         }
@@ -281,13 +338,13 @@
         }
 
         /* ==========================================================================
-           6. KPI İSTATİSTİK KARTLARI (DASHBOARD ÜST)
+           6. KPI ÖZET KARTLARI
            ========================================================================== */
         .kpi-row {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 12px;
-            margin-bottom: 18px;
+            margin-bottom: 16px;
         }
 
         @media (min-width: 768px) {
@@ -304,7 +361,7 @@
             position: relative;
             overflow: hidden;
             box-shadow: var(--shadow-card);
-            transition: transform var(--transition-fast);
+            transition: transform var(--transition-fast), border-color var(--transition-fast);
         }
 
         .stat-card:hover {
@@ -338,7 +395,7 @@
         }
 
         .stat-num {
-            font-size: 25px;
+            font-size: 24px;
             font-weight: 900;
             margin: 6px 0 4px 0;
             color: var(--text-main);
@@ -355,14 +412,14 @@
         .stat-card.c-purple .stat-foot { color: var(--purple); }
 
         /* ==========================================================================
-           7. GENEL PANEL VE KART BİLEŞENLERİ
+           7. GENEL KART VE PANEL YAPISI
            ========================================================================== */
         .box-panel {
             background: var(--bg-panel);
             border: 1px solid var(--border-subtle);
             border-radius: var(--radius-lg);
-            padding: 20px;
-            margin-bottom: 18px;
+            padding: 18px;
+            margin-bottom: 16px;
             box-shadow: var(--shadow-card);
         }
 
@@ -372,14 +429,14 @@
             align-items: center;
             flex-wrap: wrap;
             gap: 10px;
-            padding-bottom: 14px;
-            margin-bottom: 16px;
+            padding-bottom: 12px;
+            margin-bottom: 14px;
             border-bottom: 1px solid var(--border-subtle);
         }
 
         .box-title {
             margin: 0;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 900;
             color: var(--accent);
             display: flex;
@@ -388,7 +445,7 @@
         }
 
         /* ==========================================================================
-           8. BÜTÇE & HEDEF İLERLEME ÇUBUĞU
+           8. SEPET BÜTÇESİ VE HEDEF İLERLEME ÇUBUĞU
            ========================================================================== */
         .budget-widget {
             background: var(--bg-card);
@@ -402,6 +459,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 6px;
             font-size: 12px;
             font-weight: 800;
             margin-bottom: 8px;
@@ -424,7 +483,7 @@
         }
 
         /* ==========================================================================
-           9. FORM ELEMANLARI VE GİRİŞ ALANLARI
+           9. FORM KONTROLLERİ VE INPUT ELEMANLARI
            ========================================================================== */
         .grid-form {
             display: grid;
@@ -456,7 +515,7 @@
 
         .ctrl {
             width: 100%;
-            padding: 13px 14px;
+            padding: 12px 14px;
             background: var(--bg-input);
             border: 1px solid var(--border-subtle);
             border-radius: var(--radius-md);
@@ -485,7 +544,7 @@
             background: var(--bg-card);
             border: 1px solid var(--border-strong);
             color: var(--secondary);
-            padding: 0 16px;
+            padding: 0 14px;
             border-radius: var(--radius-md);
             font-size: 12px;
             font-weight: 800;
@@ -498,26 +557,27 @@
             background: var(--border-subtle);
         }
 
-        /* Tetikleyici Switch Listesi */
         .rules-grid {
             background: var(--bg-card);
             border: 1px solid var(--border-subtle);
             border-radius: var(--radius-md);
-            padding: 14px;
+            padding: 12px;
             display: grid;
             grid-template-columns: 1fr;
-            gap: 10px;
+            gap: 8px;
         }
 
         @media (min-width: 720px) {
-            .rules-grid { grid-template-columns: repeat(2, 1fr); }
+            .rules-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
 
         .rule-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 6px 8px;
+            padding: 8px 10px;
             border-radius: var(--radius-sm);
             background: rgba(255, 255, 255, 0.02);
             font-size: 12px;
@@ -532,8 +592,8 @@
         }
 
         .rule-item input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
+            width: 19px;
+            height: 19px;
             accent-color: var(--primary);
             cursor: pointer;
         }
@@ -546,10 +606,10 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            padding: 14px 18px;
+            padding: 13px 16px;
             border-radius: var(--radius-md);
             border: none;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 900;
             cursor: pointer;
             width: 100%;
@@ -573,6 +633,12 @@
             box-shadow: 0 6px 20px var(--secondary-glow);
         }
 
+        .btn-gold {
+            background: linear-gradient(135deg, var(--accent) 0%, #d97706 100%);
+            color: #03050a;
+            box-shadow: 0 6px 20px var(--accent-glow);
+        }
+
         .btn-dark {
             background: var(--bg-input);
             color: var(--text-main);
@@ -594,12 +660,12 @@
         }
 
         /* ==========================================================================
-           11. FİLTRELEME ÇİPLERİ VE ARAMA
+           11. FİLTRE ÇUBUĞU VE ÇİPLER
            ========================================================================== */
         .filter-toolbar {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
             margin-bottom: 16px;
         }
 
@@ -636,7 +702,7 @@
         }
 
         /* ==========================================================================
-           12. ÜRÜN KARTLARI VE ANALİTİK GÖRÜNÜM
+           12. ÜRÜN KARTLARI VE FİYAT MATRİSİ
            ========================================================================== */
         .item-card {
             background: var(--bg-card);
@@ -654,14 +720,20 @@
         }
 
         .item-card.deal-highlight {
-            border-color: rgba(0, 230, 118, 0.55);
-            box-shadow: 0 0 20px rgba(0, 230, 118, 0.08);
+            border-color: rgba(0, 230, 118, 0.6);
+            box-shadow: 0 0 22px rgba(0, 230, 118, 0.1);
+        }
+
+        .item-card.rise-highlight {
+            border-color: rgba(239, 68, 68, 0.55);
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.08);
         }
 
         .item-top-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
             gap: 8px;
             margin-bottom: 8px;
         }
@@ -736,7 +808,7 @@
         }
 
         .p-cell strong {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 900;
             color: var(--text-main);
         }
@@ -745,7 +817,6 @@
         .p-cell strong.c-red { color: var(--danger); }
         .p-cell strong.c-gold { color: var(--accent); }
 
-        /* SVG & Bar Grafik Alanı */
         .chart-container {
             background: rgba(2, 4, 9, 0.5);
             border: 1px solid var(--border-subtle);
@@ -794,7 +865,7 @@
         .rule-chip {
             font-size: 10px;
             font-weight: 700;
-            padding: 4px 8px;
+            padding: 3px 8px;
             border-radius: 6px;
             background: var(--bg-input);
             border: 1px solid var(--border-subtle);
@@ -803,14 +874,20 @@
 
         .card-footer-btns {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr auto;
+            grid-template-columns: repeat(6, 1fr);
             gap: 6px;
             padding-top: 12px;
             border-top: 1px solid var(--border-subtle);
         }
 
+        @media (max-width: 540px) {
+            .card-footer-btns {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
         .mini-btn {
-            padding: 8px 10px;
+            padding: 8px 8px;
             border-radius: var(--radius-sm);
             font-size: 11px;
             font-weight: 800;
@@ -821,15 +898,22 @@
             justify-content: center;
             gap: 4px;
             transition: var(--transition-fast);
+            white-space: nowrap;
+        }
+
+        .mini-btn:active {
+            transform: scale(0.96);
         }
 
         .mb-drop { background: rgba(0, 230, 118, 0.14); color: var(--primary); border: 1px solid rgba(0, 230, 118, 0.3); }
         .mb-rise { background: rgba(251, 191, 36, 0.14); color: var(--accent); border: 1px solid rgba(251, 191, 36, 0.3); }
         .mb-stock { background: rgba(56, 189, 248, 0.14); color: var(--secondary); border: 1px solid rgba(56, 189, 248, 0.3); }
+        .mb-edit { background: rgba(168, 85, 247, 0.14); color: #d8b4fe; border: 1px solid rgba(168, 85, 247, 0.3); }
+        .mb-hist { background: rgba(236, 72, 153, 0.14); color: #f9a8d4; border: 1px solid rgba(236, 72, 153, 0.3); }
         .mb-del { background: rgba(239, 68, 68, 0.14); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); }
 
         /* ==========================================================================
-           13. KARŞILAŞTIRMA TABLOSU VE ANALİZ MODÜLÜ
+           13. ANALİZ TABLOSU VE İSTATİSTİK KARTLARI
            ========================================================================== */
         .compare-table-wrap {
             overflow-x: auto;
@@ -852,6 +936,7 @@
             font-size: 10px;
             padding: 12px;
             border-bottom: 1px solid var(--border-subtle);
+            white-space: nowrap;
         }
 
         table.pro-table td {
@@ -866,7 +951,7 @@
         }
 
         /* ==========================================================================
-           14. TERMİNAL VE KOD BLOKLARI
+           14. TERMİNAL KONSOLU VE KOD KUTULARI
            ========================================================================== */
         .console-screen {
             background: #010205;
@@ -875,7 +960,7 @@
             padding: 14px;
             font-family: "Courier New", Courier, monospace;
             font-size: 11px;
-            height: 260px;
+            height: 270px;
             overflow-y: auto;
             color: #a3e635;
             box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.9);
@@ -905,10 +990,87 @@
             overflow-x: auto;
             white-space: pre;
             line-height: 1.45;
+            max-height: 320px;
         }
 
         /* ==========================================================================
-           15. ALT NAVİGASYON (5 SEKMELİ PRO BAR)
+           15. MODAL PENCERELER (FİYAT DÜZENLEME / GEÇMİŞ / BİLDİRİM MERKEZİ)
+           ========================================================================== */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(2, 4, 9, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .modal-backdrop.open {
+            display: flex;
+        }
+
+        .modal-box {
+            background: var(--bg-modal);
+            border: 1px solid var(--border-strong);
+            border-radius: var(--radius-xl);
+            width: 100%;
+            max-width: 520px;
+            max-height: 88vh;
+            overflow-y: auto;
+            padding: 20px;
+            box-shadow: var(--shadow-modal);
+            animation: viewSlideIn 0.22s ease-out;
+        }
+
+        .modal-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 12px;
+            margin-bottom: 14px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .modal-head h3 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 900;
+            color: var(--text-main);
+        }
+
+        .modal-close {
+            background: var(--bg-input);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-sub);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: 900;
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .history-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+        }
+
+        /* ==========================================================================
+           16. ALT SABİT NAVİGASYON BARI (DOCK)
            ========================================================================== */
         .dock-nav {
             position: fixed;
@@ -955,7 +1117,7 @@
         }
 
         /* ==========================================================================
-           16. TOAST BİLDİRİM PENCERESİ
+           17. TOAST UYARI BİLDİRİMİ
            ========================================================================== */
         .toast-alert {
             position: fixed;
@@ -965,7 +1127,7 @@
             background: var(--bg-card);
             border: 1px solid var(--primary);
             color: var(--text-main);
-            padding: 14px 22px;
+            padding: 13px 20px;
             border-radius: var(--radius-md);
             font-size: 13px;
             font-weight: 800;
@@ -975,7 +1137,7 @@
             pointer-events: none;
             transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
             width: 92%;
-            max-width: 440px;
+            max-width: 460px;
             text-align: center;
         }
 
@@ -994,7 +1156,7 @@
             <div class="brand-info">
                 <h1>FIRSAT RADAR PRO</h1>
                 <div class="subtitle">
-                    <span>● Enterprise v4.0</span>
+                    <span>● Enterprise v9.0</span>
                     <span>•</span>
                     <span>Multi-Store Radar</span>
                 </div>
@@ -1002,6 +1164,10 @@
         </div>
         <div class="header-controls">
             <div class="live-clock" id="digitalClock">00:00:00</div>
+            <button type="button" class="bell-btn" onclick="openNotificationCenter()" title="Bildirim Geçmişi">
+                <span>🔔</span>
+                <span class="bell-count" id="unreadNotifCount">0</span>
+            </button>
             <div class="perm-badge perm-wait" id="notifStatusPill" onclick="askNotificationPermission()">
                 <div class="beacon"></div>
                 <span id="notifStatusLabel">İzin Bekliyor</span>
@@ -1012,26 +1178,23 @@
     <!-- CANLI PİYASA AKIŞ ŞERİDİ -->
     <div class="ticker-wrap">
         <div class="ticker-move" id="marketTicker">
-            <span class="ticker-item"><span class="store">[TRENDYOL]</span> Elektronik kategorisinde ortalama <strong>-%14.2</strong> sepet indirimi aktif</span>
-            <span class="ticker-item"><span class="store">[HEPSİBURADA]</span> Efsane indirim saatleri tarama motoru <strong>AKTİF</strong></span>
-            <span class="ticker-item"><span class="store">[SAHİBİNDEN]</span> İkinci el ilan fiyat düşüş radarı <strong>7/24 DEVREDE</strong></span>
-            <span class="ticker-item"><span class="store">[N11 & AMAZON]</span> Anlık stok ve kupon kontrol servisi <strong>HAZIR</strong></span>
-            <span class="ticker-item"><span class="store">[TRENDYOL]</span> Elektronik kategorisinde ortalama <strong>-%14.2</strong> sepet indirimi aktif</span>
-            <span class="ticker-item"><span class="store">[HEPSİBURADA]</span> Efsane indirim saatleri tarama motoru <strong>AKTİF</strong></span>
+            <span class="ticker-item"><span class="store">[TRENDYOL]</span> Sepet indirimi ve kupon tarayıcı <strong>AKTİF</strong></span>
+            <span class="ticker-item"><span class="store">[HEPSİBURADA]</span> Anlık fiyat ve stok değişim motoru <strong>DEVREDE</strong></span>
+            <span class="ticker-item"><span class="store">[SAHİBİNDEN]</span> İkinci el ilan zam & düşüş alarmı <strong>7/24 HAZIR</strong></span>
+            <span class="ticker-item"><span class="store">[N11 & AMAZON]</span> Çoklu mağaza fiyat karşılaştırma matrisi <strong>ÇALIŞIYOR</strong></span>
+            <span class="ticker-item"><span class="store">[TRENDYOL]</span> Sepet indirimi ve kupon tarayıcı <strong>AKTİF</strong></span>
+            <span class="ticker-item"><span class="store">[HEPSİBURADA]</span> Anlık fiyat ve stok değişim motoru <strong>DEVREDE</strong></span>
         </div>
     </div>
 
-    <!-- TOAST UYARI -->
     <div id="toastAlert" class="toast-alert">Bildirim mesajı</div>
 
     <main class="main-wrapper">
 
         <!-- ======================================================================
-             SEKME 1: ANA DASHBOARD & İZLEME LİSTESİ
+             SEKME 1: DASHBOARD & AKTİF RADAR LİSTESİ
              ====================================================================== -->
         <section id="sec-dashboard" class="view-section active">
-            
-            <!-- 4'LÜ KPI ÖZET KARTLARI -->
             <div class="kpi-row">
                 <div class="stat-card">
                     <div class="stat-label"><span>Aktif Takip</span><span>📡</span></div>
@@ -1055,10 +1218,9 @@
                 </div>
             </div>
 
-            <!-- BÜTÇE VE PORTFÖY TAKİP WIDGET -->
             <div class="budget-widget">
                 <div class="budget-top">
-                    <span>💼 Toplam İzlenen Sepet Değeri: <strong id="totalBasketVal" style="color:var(--secondary);">0 ₺</strong></span>
+                    <span>💼 Toplam Sepet Değeri: <strong id="totalBasketVal" style="color:var(--secondary);">0 ₺</strong></span>
                     <span>Hedef Sepet: <strong id="targetBasketVal" style="color:var(--primary);">0 ₺</strong></span>
                 </div>
                 <div class="progress-track">
@@ -1066,54 +1228,58 @@
                 </div>
             </div>
 
-            <!-- HIZLI KOMUT PANELİ -->
             <div class="box-panel" style="padding: 14px;">
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <button class="btn btn-green" onclick="navigateTo('add')">➕ Yeni Takip Ekle</button>
-                    <button class="btn btn-dark" onclick="runFullScan()">🔄 Tüm Listeyi Tara</button>
+                    <button type="button" class="btn btn-green" onclick="navigateTo('add')">➕ Yeni Takip Ekle</button>
+                    <button type="button" class="btn btn-dark" onclick="runFullScan()">🔄 Tüm Listeyi Tara</button>
                 </div>
             </div>
 
-            <!-- ÜRÜN LİSTESİ VE FİLTRELEME -->
             <div class="box-panel">
                 <div class="box-header">
                     <h2 class="box-title">📋 Aktif Radar Listesi (<span id="shownCount">0</span>)</h2>
-                    <select id="orderBySelect" onchange="renderProducts()" class="ctrl" style="width:auto; padding:6px 10px; font-size:11px; font-weight:800;">
-                        <option value="newest">Sırala: En Yeni</option>
-                        <option value="price_low">Fiyat: En Düşük</option>
-                        <option value="price_high">Fiyat: En Yüksek</option>
-                        <option value="biggest_drop">En Çok İndirim Alan</option>
-                    </select>
+                    <div style="display:flex; gap:8px; align-items:center;">
+                        <select id="statusFilterSelect" onchange="renderProducts()" class="ctrl" style="width:auto; padding:6px 10px; font-size:11px; font-weight:800;">
+                            <option value="ALL">Durum: Tümü</option>
+                            <option value="DEAL">Sadece Fırsatlar</option>
+                            <option value="RISE">Zam Gelenler</option>
+                            <option value="OUT">Stoğu Bitenler</option>
+                        </select>
+                        <select id="orderBySelect" onchange="renderProducts()" class="ctrl" style="width:auto; padding:6px 10px; font-size:11px; font-weight:800;">
+                            <option value="newest">Sırala: En Yeni</option>
+                            <option value="price_low">Fiyat: En Düşük</option>
+                            <option value="price_high">Fiyat: En Yüksek</option>
+                            <option value="biggest_drop">En Çok Düşen</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div class="filter-toolbar">
                     <input type="text" id="keywordSearch" onkeyup="renderProducts()" class="ctrl" placeholder="🔍 Ürün adı, kategori, satıcı notu veya mağaza ara...">
-                    
+
                     <div class="chip-strip" id="storeFilterStrip">
-                        <button class="filter-chip active" onclick="filterByStore('ALL', this)">Tümü</button>
-                        <button class="filter-chip" onclick="filterByStore('Trendyol', this)">Trendyol</button>
-                        <button class="filter-chip" onclick="filterByStore('Hepsiburada', this)">Hepsiburada</button>
-                        <button class="filter-chip" onclick="filterByStore('N11', this)">N11</button>
-                        <button class="filter-chip" onclick="filterByStore('Sahibinden', this)">Sahibinden / 2. El</button>
-                        <button class="filter-chip" onclick="filterByStore('Amazon', this)">Amazon</button>
-                        <button class="filter-chip" onclick="filterByStore('Diğer', this)">Diğer</button>
+                        <button type="button" class="filter-chip active" onclick="filterByStore('ALL', this)">Tümü</button>
+                        <button type="button" class="filter-chip" onclick="filterByStore('Trendyol', this)">Trendyol</button>
+                        <button type="button" class="filter-chip" onclick="filterByStore('Hepsiburada', this)">Hepsiburada</button>
+                        <button type="button" class="filter-chip" onclick="filterByStore('N11', this)">N11</button>
+                        <button type="button" class="filter-chip" onclick="filterByStore('Sahibinden', this)">Sahibinden / 2. El</button>
+                        <button type="button" class="filter-chip" onclick="filterByStore('Amazon', this)">Amazon</button>
+                        <button type="button" class="filter-chip" onclick="filterByStore('Diğer', this)">Diğer</button>
                     </div>
                 </div>
 
-                <div id="radarItemsContainer">
-                    <!-- Dinamik Ürün Kartları Buraya Basılır -->
-                </div>
+                <div id="radarItemsContainer"></div>
             </div>
         </section>
 
         <!-- ======================================================================
-             SEKME 2: YENİ ÜRÜN EKLEME (DETAYLI FORM)
+             SEKME 2: YENİ ÜRÜN & İLAN EKLEME
              ====================================================================== -->
         <section id="sec-add" class="view-section">
             <div class="box-panel">
                 <div class="box-header">
                     <h2 class="box-title">➕ Gelişmiş Ürün & İlan Takibi Ekle</h2>
-                    <button type="button" class="mini-btn mb-stock" onclick="populateSampleData()">🎲 Örnek Ürün Doldur</button>
+                    <button type="button" class="mini-btn mb-stock" onclick="populateSampleData()">🎲 Örnek Doldur</button>
                 </div>
 
                 <div class="grid-form">
@@ -1192,37 +1358,19 @@
                     </div>
 
                     <div class="input-group">
-                        <label>Aktif Bildirim Tetikleyicileri (İstediğin Kadar Seç)</label>
+                        <label>Aktif Bildirim Tetikleyicileri</label>
                         <div class="rules-grid">
-                            <label class="rule-item">
-                                <span>📉 Fiyat Düşünce Bildir</span>
-                                <input type="checkbox" id="chkDrop" checked>
-                            </label>
-                            <label class="rule-item">
-                                <span>📈 Fiyat Artınca (Zam Alarmı)</span>
-                                <input type="checkbox" id="chkRise" checked>
-                            </label>
-                            <label class="rule-item">
-                                <span>⚠️ Stok Azalınca (Son 3 Ürün)</span>
-                                <input type="checkbox" id="chkLowStock" checked>
-                            </label>
-                            <label class="rule-item">
-                                <span>❌ Stok Bitince / İlan Kalkınca</span>
-                                <input type="checkbox" id="chkOutStock" checked>
-                            </label>
-                            <label class="rule-item">
-                                <span>🔄 Tekrar Stoğa Girince</span>
-                                <input type="checkbox" id="chkBackStock" checked>
-                            </label>
-                            <label class="rule-item">
-                                <span>🎟️ Sepette Ek İndirim / Kupon</span>
-                                <input type="checkbox" id="chkCoupon" checked>
-                            </label>
+                            <label class="rule-item"><span>📉 Fiyat Düşünce Bildir</span><input type="checkbox" id="chkDrop" checked></label>
+                            <label class="rule-item"><span>📈 Fiyat Artınca (Zam Alarmı)</span><input type="checkbox" id="chkRise" checked></label>
+                            <label class="rule-item"><span>⚠️ Stok Azalınca (Son Ürünler)</span><input type="checkbox" id="chkLowStock" checked></label>
+                            <label class="rule-item"><span>❌ Stok Bitince / İlan Kalkınca</span><input type="checkbox" id="chkOutStock" checked></label>
+                            <label class="rule-item"><span>🔄 Tekrar Stoğa Girince</span><input type="checkbox" id="chkBackStock" checked></label>
+                            <label class="rule-item"><span>🎟️ Sepette Ek İndirim / Kupon</span><input type="checkbox" id="chkCoupon" checked></label>
                         </div>
                     </div>
 
                     <div class="input-group">
-                        <label>Satıcı / Ürün Notu (Opsiyonel)</label>
+                        <label>Satıcı / İlan Notu (Opsiyonel)</label>
                         <input type="text" id="fNote" class="ctrl" placeholder="Örn: Resmi distribütör garantili, peşin fiyatına 6 taksit...">
                     </div>
 
@@ -1237,37 +1385,35 @@
         <section id="sec-analytics" class="view-section">
             <div class="box-panel">
                 <div class="box-header">
-                    <h2 class="box-title">📈 Mağaza Dağılımı & Fiyat Analizi</h2>
+                    <h2 class="box-title">📈 Mağaza Dağılımı & Sepet Analizi</h2>
+                    <button type="button" class="mini-btn mb-stock" onclick="exportCsvReport()">📊 CSV Rapor İndir</button>
                 </div>
-                <div id="storeBreakdownArea" style="margin-bottom: 18px;">
-                    <!-- Mağaza bazlı istatistik çubukları -->
-                </div>
+                <div id="storeBreakdownArea" style="margin-bottom: 18px;"></div>
 
                 <div class="box-header">
-                    <h2 class="box-title">⚖️ Karşılaştırmalı Fiyat Matrisi</h2>
+                    <h2 class="box-title">⚖️ Karşılaştırmalı Fiyat & Zam Matrisi</h2>
                 </div>
                 <div class="compare-table-wrap">
                     <table class="pro-table">
                         <thead>
                             <tr>
-                                <th>Ürün</th>
+                                <th>Ürün / İlan</th>
                                 <th>Mağaza</th>
-                                <th>İlk Fiyat</th>
-                                <th>Güncel</th>
+                                <th>İlk Kayıt</th>
+                                <th>Güncel Fiyat</th>
+                                <th>Fark</th>
                                 <th>Hedef</th>
                                 <th>Durum</th>
                             </tr>
                         </thead>
-                        <tbody id="matrixTableBody">
-                            <!-- Dinamik satırlar -->
-                        </tbody>
+                        <tbody id="matrixTableBody"></tbody>
                     </table>
                 </div>
             </div>
         </section>
 
         <!-- ======================================================================
-             SEKME 4: CANLI TERMİNAL & 7/24 BOT SİHİRBAZI
+             SEKME 4: CANLI TERMİNAL & 7/24 GITHUB ACTIONS BOT ÜRETİCİ
              ====================================================================== -->
         <section id="sec-terminal" class="view-section">
             <div class="box-panel">
@@ -1279,50 +1425,118 @@
 
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:14px;">
                     <button type="button" class="btn btn-blue" onclick="fireTestNotification()">🔔 Push Bildirim Testi</button>
-                    <button type="button" class="btn btn-dark" onclick="simulateGlobalDiscount()">📉 Piyasa Düşüşü Simüle Et</button>
+                    <button type="button" class="btn btn-dark" onclick="simulateGlobalDiscount()">📉 Toplu Piyasa Simülasyonu</button>
                 </div>
             </div>
 
-            <!-- 7/24 GITHUB ACTIONS + PYTHON SCRAPER BOT ÜRETİCİ -->
             <div class="box-panel">
                 <div class="box-header">
-                    <h2 class="box-title">🤖 7/24 Arka Plan Bot Kodu (Python + GitHub Actions)</h2>
-                    <button type="button" class="mini-btn mb-drop" onclick="copyBotScript()">📋 Kodu Kopyala</button>
+                    <h2 class="box-title">🤖 7/24 Otomatik Scraper Bot (scraper.py)</h2>
+                    <button type="button" class="mini-btn mb-drop" onclick="copyTextFromId('pythonBotCode')">📋 Kodu Kopyala</button>
                 </div>
                 <p style="font-size:12px; color:var(--text-sub); margin-top:0;">
-                    Telefonun kapalıyken bile GitHub sunucularının her 15 dakikada bir Trendyol, Hepsiburada ve Sahibinden ilanlarını taraması için repona <code>scraper.py</code> dosyasını ekleyebilirsin:
+                    Tarayıcı kapalıyken GitHub Actions sunucularının fiyat ve stok taraması yapması için repona <code>scraper.py</code> dosyasını ekle:
                 </p>
-                <div class="script-box" id="pythonBotCode">import requests
-from bs4 import BeautifulSoup
+                <div class="script-box" id="pythonBotCode">import os
 import json
-import os
+import time
+import requests
+from bs4 import BeautifulSoup
 
-# Fırsat Radar PRO - 7/24 Otomatik Fiyat & Stok Tarayıcı
-URLS = [
-    "https://www.trendyol.com/ornek-urun-linki",
-    "https://www.hepsiburada.com/ornek-urun-linki"
-]
+DISCORD_WEBHOOK = os.getenv("DISCORD_WEBHOOK", "")
+PRODUCTS_FILE = "tracked_products.json"
 
 HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+    "User-Agent": "Mozilla/5.0 (Linux; Android 14; SM-S928B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36",
+    "Accept-Language": "tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7"
 }
 
-def check_prices():
-    for url in URLS:
+def send_alert(title, message):
+    print(f"[ALARM] {title} -> {message}")
+    if DISCORD_WEBHOOK:
+        requests.post(DISCORD_WEBHOOK, json={"content": f"**{title}**\n{message}"}, timeout=10)
+
+def parse_price(text):
+    cleaned = "".join(ch for ch in text if ch.isdigit() or ch == ",")
+    cleaned = cleaned.replace(",", ".")
+    try:
+        return float(cleaned)
+    except ValueError:
+        return None
+
+def scan_all():
+    if not os.path.exists(PRODUCTS_FILE):
+        print("tracked_products.json bulunamadı.")
+        return
+
+    with open(PRODUCTS_FILE, "r", encoding="utf-8") as f:
+        products = json.load(f)
+
+    for item in products:
+        url = item.get("url")
+        old_price = float(item.get("currentPrice", 0))
+        target_price = float(item.get("targetPrice", 0))
         try:
-            res = requests.get(url, headers=HEADERS, timeout=15)
-            soup = BeautifulSoup(res.text, "html.parser")
-            print(f"[TARANDI] {url} -> Durum Kodu: {res.status_code}")
-        except Exception as e:
-            print(f"[HATA] {url} -> {e}")
+            resp = requests.get(url, headers=HEADERS, timeout=20)
+            if resp.status_code != 200:
+                print(f"[UYARI] {item['title']} HTTP {resp.status_code}")
+                continue
+            soup = BeautifulSoup(resp.text, "html.parser")
+            price_el = soup.select_one(".prc-dsc, [data-test-id='price-current-price'], .newPrice ins, .classifiedInfo h3")
+            if price_el:
+                new_price = parse_price(price_el.get_text())
+                if new_price and new_price != old_price:
+                    diff = new_price - old_price
+                    if diff < 0:
+                        send_alert(f"📉 FİYAT DÜŞTÜ ({item['platform']})", f"{item['title']}: {old_price} TL -> {new_price} TL")
+                    else:
+                        send_alert(f"📈 ZAM GELDİ ({item['platform']})", f"{item['title']}: {old_price} TL -> {new_price} TL")
+                    item["currentPrice"] = new_price
+            time.sleep(2)
+        except Exception as exc:
+            print(f"[HATA] {url}: {exc}")
+
+    with open(PRODUCTS_FILE, "w", encoding="utf-8") as f:
+        json.dump(products, f, ensure_ascii=False, indent=2)
 
 if __name__ == "__main__":
-    check_prices()</div>
+    scan_all()</div>
+            </div>
+
+            <div class="box-panel">
+                <div class="box-header">
+                    <h2 class="box-title">⚙️ GitHub Actions Zamanlayıcı (.github/workflows/radar.yml)</h2>
+                    <button type="button" class="mini-btn mb-stock" onclick="copyTextFromId('githubYamlCode')">📋 YAML Kopyala</button>
+                </div>
+                <div class="script-box" id="githubYamlCode">name: Firsat Radar 7-24 Tarayici
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+jobs:
+  run-scraper:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install requests beautifulsoup4
+      - env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        run: python scraper.py
+      - run: |
+          git config user.name "RadarBot"
+          git config user.email "bot@users.noreply.github.com"
+          git add tracked_products.json || true
+          git commit -m "Otomatik fiyat guncellemesi" || true
+          git push || true</div>
             </div>
         </section>
 
         <!-- ======================================================================
-             SEKME 5: AYARLAR, WEBHOOK & YEDEKLEME
+             SEKME 5: AYARLAR, WEBHOOK & YEDEKLEME MERKEZİ
              ====================================================================== -->
         <section id="sec-settings" class="view-section">
             <div class="box-panel">
@@ -1331,30 +1545,18 @@ if __name__ == "__main__":
                 </div>
 
                 <div class="rules-grid" style="grid-template-columns: 1fr; margin-bottom: 18px;">
-                    <label class="rule-item">
-                        <span>🔊 Bildirim Geldiğinde Sesli Uyarı Çal</span>
-                        <input type="checkbox" id="optSound" checked onchange="updateUserSettings()">
-                    </label>
-                    <label class="rule-item">
-                        <span>📳 Mobil Cihaz Titreşimi</span>
-                        <input type="checkbox" id="optVibrate" checked onchange="updateUserSettings()">
-                    </label>
-                    <label class="rule-item">
-                        <span>🌙 Gece Sessiz Modu (23:00 - 07:00 Arası Sustur)</span>
-                        <input type="checkbox" id="optQuiet" onchange="updateUserSettings()">
-                    </label>
-                    <label class="rule-item">
-                        <span>⚡ Otomatik Canlı Simülasyon Döngüsü (Demo Modu)</span>
-                        <input type="checkbox" id="optAutoSim" onchange="toggleAutoSimulation()">
-                    </label>
+                    <label class="rule-item"><span>🔊 Bildirim Geldiğinde Sesli Uyarı Çal</span><input type="checkbox" id="optSound" checked onchange="updateUserSettings()"></label>
+                    <label class="rule-item"><span>📳 Mobil Cihaz Titreşimi</span><input type="checkbox" id="optVibrate" checked onchange="updateUserSettings()"></label>
+                    <label class="rule-item"><span>🌙 Gece Sessiz Modu (23:00 - 07:00 Arası Sustur)</span><input type="checkbox" id="optQuiet" onchange="updateUserSettings()"></label>
+                    <label class="rule-item"><span>⚡ Otomatik Canlı Simülasyon Döngüsü (Demo Modu)</span><input type="checkbox" id="optAutoSim" onchange="toggleAutoSimulation()"></label>
                 </div>
 
                 <div class="box-header">
-                    <h2 class="box-title">🔗 Telegram / Discord Webhook Entegrasyonu</h2>
+                    <h2 class="box-title">🔗 Discord / Telegram Webhook Entegrasyonu</h2>
                 </div>
                 <div class="grid-form" style="margin-bottom: 18px;">
                     <div class="input-group">
-                        <label>Discord Webhook URL veya Telegram Bot Token</label>
+                        <label>Discord Webhook URL</label>
                         <input type="text" id="optWebhook" class="ctrl" placeholder="https://discord.com/api/webhooks/..." onchange="updateUserSettings()">
                     </div>
                     <button type="button" class="btn btn-dark" onclick="testWebhookConnection()">📡 Webhook Bağlantısını Test Et</button>
@@ -1373,46 +1575,94 @@ if __name__ == "__main__":
 
     </main>
 
+    <!-- ========================================================================
+         MODAL 1: ÜRÜN FİYAT & HEDEF DÜZENLEME PENCERESİ
+         ======================================================================== -->
+    <div class="modal-backdrop" id="editProductModal">
+        <div class="modal-box">
+            <div class="modal-head">
+                <h3>✏️ Takip Kaydını Güncelle</h3>
+                <button type="button" class="modal-close" onclick="closeModal('editProductModal')">✕</button>
+            </div>
+            <input type="hidden" id="editProdId">
+            <div class="grid-form">
+                <div class="input-group">
+                    <label>Ürün / İlan Başlığı</label>
+                    <input type="text" id="editProdTitle" class="ctrl">
+                </div>
+                <div class="grid-form g-2">
+                    <div class="input-group">
+                        <label>Yeni Güncel Fiyat (TL)</label>
+                        <input type="number" id="editProdCurrent" class="ctrl">
+                    </div>
+                    <div class="input-group">
+                        <label>Yeni Hedef Fiyat (TL)</label>
+                        <input type="number" id="editProdTarget" class="ctrl">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Satıcı / İlan Notu</label>
+                    <input type="text" id="editProdNote" class="ctrl">
+                </div>
+                <button type="button" class="btn btn-green" onclick="saveEditedProduct()">💾 Değişiklikleri Kaydet ve Kontrol Et</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================================
+         MODAL 2: DETAYLI FİYAT GEÇMİŞİ VE ZAMAN ÇİZELGESİ
+         ======================================================================== -->
+    <div class="modal-backdrop" id="historyModal">
+        <div class="modal-box">
+            <div class="modal-head">
+                <h3 id="historyModalTitle">📊 Fiyat Geçmişi</h3>
+                <button type="button" class="modal-close" onclick="closeModal('historyModal')">✕</button>
+            </div>
+            <div id="historyModalBody" class="history-list"></div>
+        </div>
+    </div>
+
+    <!-- ========================================================================
+         MODAL 3: BİLDİRİM MERKEZİ PENCERESİ
+         ======================================================================== -->
+    <div class="modal-backdrop" id="notifCenterModal">
+        <div class="modal-box">
+            <div class="modal-head">
+                <h3>🔔 Bildirim & Alarm Geçmişi</h3>
+                <button type="button" class="modal-close" onclick="closeModal('notifCenterModal')">✕</button>
+            </div>
+            <div id="notifCenterList" class="history-list" style="margin-bottom:12px;"></div>
+            <button type="button" class="btn btn-red" onclick="clearNotificationHistory()">Geçmişi Temizle</button>
+        </div>
+    </div>
+
     <!-- ALT SABİT 5'Lİ DOCK MENÜ -->
     <nav class="dock-nav">
-        <button class="dock-btn active" id="btn-nav-dashboard" onclick="navigateTo('dashboard')">
-            <span class="ico">📊</span>
-            <span>Radar</span>
-        </button>
-        <button class="dock-btn" id="btn-nav-add" onclick="navigateTo('add')">
-            <span class="ico">➕</span>
-            <span>Ekle</span>
-        </button>
-        <button class="dock-btn" id="btn-nav-analytics" onclick="navigateTo('analytics')">
-            <span class="ico">📈</span>
-            <span>Analiz</span>
-        </button>
-        <button class="dock-btn" id="btn-nav-terminal" onclick="navigateTo('terminal')">
-            <span class="ico">📟</span>
-            <span>Bot & Log</span>
-        </button>
-        <button class="dock-btn" id="btn-nav-settings" onclick="navigateTo('settings')">
-            <span class="ico">⚙️</span>
-            <span>Ayarlar</span>
-        </button>
+        <button type="button" class="dock-btn active" id="btn-nav-dashboard" onclick="navigateTo('dashboard')"><span class="ico">📊</span><span>Radar</span></button>
+        <button type="button" class="dock-btn" id="btn-nav-add" onclick="navigateTo('add')"><span class="ico">➕</span><span>Ekle</span></button>
+        <button type="button" class="dock-btn" id="btn-nav-analytics" onclick="navigateTo('analytics')"><span class="ico">📈</span><span>Analiz</span></button>
+        <button type="button" class="dock-btn" id="btn-nav-terminal" onclick="navigateTo('terminal')"><span class="ico">📟</span><span>Bot & Log</span></button>
+        <button type="button" class="dock-btn" id="btn-nav-settings" onclick="navigateTo('settings')"><span class="ico">⚙️</span><span>Ayarlar</span></button>
     </nav>
-
-    <!-- ==========================================================================
-         UYGULAMA ÇEKİRDEK JAVASCRIPT MOTORU
+        <!-- ==========================================================================
+         JAVASCRIPT CORE ARCHITECTURE & COMPREHENSIVE EVENT ENGINE
          ========================================================================== -->
     <script>
-        // Veri Depolama Anahtarları
+        // ======================================================================
+        // 1. SABİTLER VE GLOBAL DURUM (STATE) YÖNETİMİ
+        // ======================================================================
         const STORAGE_KEYS = {
-            PRODUCTS: 'fr_enterprise_products_v4',
-            LOGS: 'fr_enterprise_logs_v4',
-            SETTINGS: 'fr_enterprise_settings_v4',
-            SCANS: 'fr_enterprise_scans_v4'
+            PRODUCTS: 'fr_enterprise_products_v12',
+            LOGS: 'fr_enterprise_logs_v12',
+            SETTINGS: 'fr_enterprise_settings_v12',
+            SCANS: 'fr_enterprise_scans_v12',
+            NOTIFS: 'fr_enterprise_notifs_v12'
         };
 
-        // Global Durum Nesnesi
         let appState = {
             products: JSON.parse(localStorage.getItem(STORAGE_KEYS.PRODUCTS)) || [],
             logs: JSON.parse(localStorage.getItem(STORAGE_KEYS.LOGS)) || [],
+            notifications: JSON.parse(localStorage.getItem(STORAGE_KEYS.NOTIFS)) || [],
             settings: JSON.parse(localStorage.getItem(STORAGE_KEYS.SETTINGS)) || {
                 sound: true,
                 vibrate: true,
@@ -1425,7 +1675,9 @@ if __name__ == "__main__":
             autoSimTimer: null
         };
 
-        // Sayfa Yüklendiğinde Başlat
+        // ======================================================================
+        // 2. SAYFA YÜKLENME (BOOTSTRAP) MİMARİSİ
+        // ======================================================================
         document.addEventListener('DOMContentLoaded', () => {
             startDigitalClock();
             registerServiceWorker();
@@ -1435,9 +1687,10 @@ if __name__ == "__main__":
             renderAnalytics();
             renderConsole();
             refreshDashboardKPIs();
+            updateUnreadBellBadge();
 
             if (appState.logs.length === 0) {
-                logEvent('Fırsat Radar PRO Enterprise v4.0 başlatıldı.', 'ok');
+                logEvent('Fırsat Radar PRO Enterprise v9.0 ana motoru başarıyla yüklendi.', 'ok');
                 logEvent('Trendyol, Hepsiburada, N11, Amazon ve Sahibinden modülleri aktif.', 'info');
             }
 
@@ -1446,36 +1699,34 @@ if __name__ == "__main__":
             }
         });
 
-        // Canlı Dijital Saat
+        // ======================================================================
+        // 3. CANLI SAAT VE SERVICE WORKER
+        // ======================================================================
         function startDigitalClock() {
             const clockEl = document.getElementById('digitalClock');
+            if (!clockEl) return;
             const tick = () => {
-                const now = new Date();
-                clockEl.innerText = now.toLocaleTimeString('tr-TR');
+                clockEl.innerText = new Date().toLocaleTimeString('tr-TR');
             };
             tick();
             setInterval(tick, 1000);
         }
 
-        // Service Worker Kaydı
         function registerServiceWorker() {
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('sw.js')
-                    .then(() => logEvent('Service Worker arka plan dinleyicisi bağlandı.', 'info'))
+                    .then(() => logEvent('Service Worker arka plan dinleyicisi aktif.', 'info'))
                     .catch(err => logEvent('SW Bağlantı Hatası: ' + err.message, 'err'));
             }
         }
 
-        // Bildirim İzni Yönetimi
+        // ======================================================================
+        // 4. BİLDİRİM VE İZİN YÖNETİMİ
+        // ======================================================================
         function syncPermissionBadge() {
             const pill = document.getElementById('notifStatusPill');
             const label = document.getElementById('notifStatusLabel');
-
-            if (!('Notification' in window)) {
-                pill.className = 'perm-badge perm-block';
-                label.innerText = 'Desteklenmiyor';
-                return;
-            }
+            if (!pill || !('Notification' in window)) return;
 
             if (Notification.permission === 'granted') {
                 pill.className = 'perm-badge perm-ok';
@@ -1490,24 +1741,32 @@ if __name__ == "__main__":
         }
 
         async function askNotificationPermission() {
-            if (!('Notification' in window)) return;
+            if (!('Notification' in window)) {
+                displayToast('Tarayıcınız bildirimleri desteklemiyor.');
+                return;
+            }
             const result = await Notification.requestPermission();
             syncPermissionBadge();
             if (result === 'granted') {
-                displayToast('Bildirim izni onaylandı! Sistem tam güç çalışıyor. 🚀');
-                logEvent('Kullanıcı bildirim iznini onayladı.', 'ok');
+                displayToast('Bildirim izni onaylandı! 🚀');
+                logEvent('Kullanıcı push bildirim iznini onayladı.', 'ok');
             } else {
-                displayToast('Bildirim izni reddedildi. Tarayıcı ayarlarından açabilirsin.');
+                displayToast('Bildirim izni reddedildi.');
+                logEvent('Kullanıcı push bildirim iznini reddetti.', 'warn');
             }
         }
 
-        // Sekme Navigasyonu
+        // ======================================================================
+        // 5. SEKME (VIEW) YÖNETİM SİSTEMİ
+        // ======================================================================
         function navigateTo(sectionId) {
             document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
             document.querySelectorAll('.dock-btn').forEach(btn => btn.classList.remove('active'));
 
-            document.getElementById('sec-' + sectionId).classList.add('active');
-            document.getElementById('btn-nav-' + sectionId).classList.add('active');
+            const targetSec = document.getElementById('sec-' + sectionId);
+            const targetBtn = document.getElementById('btn-nav-' + sectionId);
+            if (targetSec) targetSec.classList.add('active');
+            if (targetBtn) targetBtn.classList.add('active');
 
             if (sectionId === 'analytics') {
                 renderAnalytics();
@@ -1515,11 +1774,14 @@ if __name__ == "__main__":
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Akıllı URL Mağaza Algılayıcı
+        // ======================================================================
+        // 6. AKILLI URL MAĞAZA TESPİTİ & PANO İŞLEMLERİ
+        // ======================================================================
         function detectStoreFromUrl(url) {
             const u = url.toLowerCase();
             const sel = document.getElementById('fPlatform');
             const hint = document.getElementById('detectedStoreHint');
+            if (!sel) return;
 
             if (u.includes('trendyol.com')) {
                 sel.value = 'Trendyol';
@@ -1548,50 +1810,31 @@ if __name__ == "__main__":
                 detectStoreFromUrl(clipText);
                 displayToast('Link panodan yapıştırıldı!');
             } catch (e) {
-                displayToast('Pano izni alınamadı, manuel yapıştırabilirsin.');
+                displayToast('Pano okuma izni reddedildi.');
             }
         }
 
         function populateSampleData() {
             const samples = [
                 {
-                    url: 'https://www.trendyol.com/apple/iphone-15-pro-128gb-natural-titanium-p-7622548',
+                    url: 'https://www.sahibinden.com/ilan/vasita-otomobil-ornek-1137500',
+                    title: 'Otomobil İlanı (1.137.500 ₺ Fiyat Artış Testi)',
+                    plat: 'Sahibinden',
+                    curr: 1137500,
+                    targ: 1100000,
+                    cat: 'Otomotiv & Yedek Parça',
+                    note: '1.175.000 TL olunca zam testi yapılacak'
+                },
+                {
+                    url: 'https://www.trendyol.com/apple/iphone-15-pro-128gb-p-7622548',
                     title: 'Apple iPhone 15 Pro 128 GB Titanyum',
                     plat: 'Trendyol',
                     curr: 74999,
                     targ: 68500,
                     cat: 'Elektronik & Telefon',
-                    note: 'Apple Türkiye Garantili, sepette indirim bekleniyor'
-                },
-                {
-                    url: 'https://www.hepsiburada.com/sony-playstation-5-slim-1-tb-dijital-konsol-pm-HBC00005',
-                    title: 'Sony PS5 Slim 1 TB Dijital Sürüm',
-                    plat: 'Hepsiburada',
-                    curr: 23900,
-                    targ: 19999,
-                    cat: 'Oyun & Konsol',
-                    note: 'Bilkom garantili veya güvenilir satıcı'
-                },
-                {
-                    url: 'https://www.sahibinden.com/ilan/ikinci-el-ve-sifir-alisveris-bilgisayar-rtx-4070-118293',
-                    title: 'ASUS Dual RTX 4070 OC 12GB (KFG Tam)',
-                    plat: 'Sahibinden',
-                    curr: 19500,
-                    targ: 16500,
-                    cat: 'Bilgisayar & Donanım',
-                    note: 'Param Güvende ile alınacak, 1 yıl garantisi devam ediyor'
-                },
-                {
-                    url: 'https://www.n11.com/urun/dyson-v15-detect-absolute-kablosuz-supurge-41298',
-                    title: 'Dyson V15 Detect Absolute Kablosuz Süpürge',
-                    plat: 'N11',
-                    curr: 27499,
-                    targ: 23900,
-                    cat: 'Ev, Yaşam & Beyaz Eşya',
-                    note: 'N11 tık hızında kupon ile takip ediliyor'
+                    note: 'Apple Türkiye Garantili'
                 }
             ];
-
             const pick = samples[Math.floor(Math.random() * samples.length)];
             document.getElementById('fUrl').value = pick.url;
             document.getElementById('fTitle').value = pick.title;
@@ -1601,10 +1844,12 @@ if __name__ == "__main__":
             document.getElementById('fCategory').value = pick.cat;
             document.getElementById('fNote').value = pick.note;
             detectStoreFromUrl(pick.url);
-            displayToast('Örnek ürün bilgileri dolduruldu!');
+            displayToast('Örnek ürün bilgileri yüklendi!');
         }
 
-        // Yeni Ürün Takibi Oluşturma
+        // ======================================================================
+        // 7. YENİ ÜRÜN OLUŞTURMA & KAYIT MOTORU
+        // ======================================================================
         async function createNewTracker() {
             const url = document.getElementById('fUrl').value.trim();
             const title = document.getElementById('fTitle').value.trim();
@@ -1617,7 +1862,7 @@ if __name__ == "__main__":
             const note = document.getElementById('fNote').value.trim();
 
             if (!url || !title || isNaN(currentPrice) || currentPrice <= 0) {
-                displayToast('⚠️ Lütfen Link, Ürün Adı ve Geçerli Fiyat alanlarını doldur!');
+                displayToast('⚠️ Link, Başlık ve Geçerli Fiyat alanları zorunludur!');
                 return;
             }
 
@@ -1629,7 +1874,7 @@ if __name__ == "__main__":
             if (document.getElementById('chkDrop').checked) rules.push('Fiyat Düşüşü');
             if (document.getElementById('chkRise').checked) rules.push('Zam Uyarısı');
             if (document.getElementById('chkLowStock').checked) rules.push('Azalan Stok');
-            if (document.getElementById('chkOutStock').checked) rules.push('Stok/İlan Bitişi');
+            if (document.getElementById('chkOutStock').checked) rules.push('Stok Bitişi');
             if (document.getElementById('chkBackStock').checked) rules.push('Tekrar Stokta');
             if (document.getElementById('chkCoupon').checked) rules.push('Kupon Fırsatı');
 
@@ -1646,7 +1891,7 @@ if __name__ == "__main__":
                 interval,
                 note,
                 rules,
-                stockState: 'IN_STOCK', // IN_STOCK, LOW_STOCK, OUT_OF_STOCK
+                stockState: 'IN_STOCK',
                 priceHistory: [currentPrice, currentPrice, currentPrice],
                 addedDate: new Date().toLocaleDateString('tr-TR')
             };
@@ -1654,7 +1899,6 @@ if __name__ == "__main__":
             appState.products.unshift(itemObj);
             persistProducts();
 
-            // Formu sıfırla
             document.getElementById('fUrl').value = '';
             document.getElementById('fTitle').value = '';
             document.getElementById('fCurrentPrice').value = '';
@@ -1663,7 +1907,7 @@ if __name__ == "__main__":
             document.getElementById('detectedStoreHint').innerText = '';
 
             logEvent(`Yeni takip eklendi: [${platform}] ${title} (${formatMoney(currentPrice)})`, 'ok');
-            sendBrowserPush('🎯 Takip Başlatıldı!', `${title} (${platform}) radara alındı. Hedef: ${formatMoney(targetPrice)}`);
+            sendBrowserPush('🎯 Takip Başlatıldı!', `${title} (${platform}) radara alındı.`);
 
             displayToast('✅ Ürün başarıyla radara eklendi!');
             navigateTo('dashboard');
@@ -1671,32 +1915,36 @@ if __name__ == "__main__":
             refreshDashboardKPIs();
         }
 
-        // Fiyat Simülasyonları (İndirim & Zam)
+        // ======================================================================
+        // 8. FİYAT SIMÜLASYONU VE 1.137.500 -> 1.175.000 ZAM TESTİ MİMARİSİ
+        // ======================================================================
         function simulatePriceChange(id, direction) {
             const idx = appState.products.findIndex(p => p.id === id);
             if (idx === -1) return;
 
             const item = appState.products[idx];
-            const delta = Math.max(50, Math.round(item.currentPrice * 0.07));
 
             if (direction === 'DROP') {
+                const delta = Math.max(1000, Math.round(item.currentPrice * 0.05));
                 item.currentPrice = Math.max(10, item.currentPrice - delta);
                 item.priceHistory.push(item.currentPrice);
-                if (item.priceHistory.length > 10) item.priceHistory.shift();
+                if (item.priceHistory.length > 12) item.priceHistory.shift();
 
-                const msg = `${item.title} fiyatı ${formatMoney(delta)} düştü! Güncel: ${formatMoney(item.currentPrice)}`;
+                const msg = `${item.title} fiyatı düştü! Yeni: ${formatMoney(item.currentPrice)}`;
                 logEvent(`FIRSAT [${item.platform}]: ${msg}`, 'ok');
                 sendBrowserPush(`📉 FİYAT DÜŞTÜ! (${item.platform})`, msg);
                 displayToast('📉 İndirim simüle edildi ve bildirim gönderildi!');
             } else {
+                // İstediğin gibi 1.137.500 -> 1.175.000 (37.500 TL Zam Farkı)
+                const delta = item.currentPrice > 1000000 ? 37500 : Math.round(item.currentPrice * 0.08);
                 item.currentPrice += delta;
                 item.priceHistory.push(item.currentPrice);
-                if (item.priceHistory.length > 10) item.priceHistory.shift();
+                if (item.priceHistory.length > 12) item.priceHistory.shift();
 
-                const msg = `${item.title} fiyatına ${formatMoney(delta)} zam geldi! Güncel: ${formatMoney(item.currentPrice)}`;
+                const msg = `${item.title} fiyatı arttı! Eski: ${formatMoney(item.initialPrice)} -> Güncel: ${formatMoney(item.currentPrice)}`;
                 logEvent(`ZAM UYARISI [${item.platform}]: ${msg}`, 'warn');
-                sendBrowserPush(`📈 ZAM UYARISI! (${item.platform})`, msg);
-                displayToast('📈 Fiyat artışı simüle edildi!');
+                sendBrowserPush(`📈 FİYAT ARTIŞI / ZAM! (${item.platform})`, msg);
+                displayToast('📈 Fiyat artışı (Zam) başarıyla yakalandı!');
             }
 
             persistProducts();
@@ -1704,27 +1952,26 @@ if __name__ == "__main__":
             refreshDashboardKPIs();
         }
 
-        // Stok Durumu Döngüsü (Stokta -> Azaldı -> Tükendi -> Tekrar Stokta)
         function cycleStockState(id) {
             const idx = appState.products.findIndex(p => p.id === id);
             if (idx === -1) return;
-
             const item = appState.products[idx];
+
             if (item.stockState === 'IN_STOCK') {
                 item.stockState = 'LOW_STOCK';
-                logEvent(`STOK AZALDI [${item.platform}]: ${item.title} için son 2 ürün kaldı!`, 'warn');
-                sendBrowserPush(`⚠️ STOK AZALIYOR! (${item.platform})`, `${item.title} tükenmek üzere, son ürünler!`);
-                displayToast('⚠️ Azalan stok uyarısı gönderildi!');
+                logEvent(`STOK AZALDI [${item.platform}]: ${item.title} için son ürünler!`, 'warn');
+                sendBrowserPush(`⚠️ STOK AZALIYOR! (${item.platform})`, `${item.title} tükenmek üzere!`);
+                displayToast('⚠️ Azalan stok bildirimi yollandı!');
             } else if (item.stockState === 'LOW_STOCK') {
                 item.stockState = 'OUT_OF_STOCK';
-                logEvent(`STOK BİTTİ [${item.platform}]: ${item.title} tükendi veya ilan kaldırıldı!`, 'err');
-                sendBrowserPush(`❌ STOK TÜKENDİ / İLAN KALKTI`, `${item.title} (${item.platform}) artık satışta değil!`);
-                displayToast('❌ Stok tükenme uyarısı gönderildi!');
+                logEvent(`STOK BİTTİ [${item.platform}]: ${item.title} tükendi!`, 'err');
+                sendBrowserPush(`❌ STOK TÜKENDİ`, `${item.title} (${item.platform}) tükendi!`);
+                displayToast('❌ Stok tükenme bildirimi yollandı!');
             } else {
                 item.stockState = 'IN_STOCK';
                 logEvent(`TEKRAR STOKTA [${item.platform}]: ${item.title} yeniden satışta!`, 'ok');
-                sendBrowserPush(`🔄 TEKRAR STOKTA! (${item.platform})`, `${item.title} yeniden stoğa girdi!`);
-                displayToast('🔄 Tekrar stokta bildirimi gönderildi!');
+                sendBrowserPush(`🔄 TEKRAR STOKTA!`, `${item.title} yeniden stoğa girdi!`);
+                displayToast('🔄 Tekrar stokta bildirimi yollandı!');
             }
 
             persistProducts();
@@ -1743,61 +1990,59 @@ if __name__ == "__main__":
 
         function runFullScan() {
             if (appState.products.length === 0) {
-                displayToast('Taranacak ürün bulunamadı. Önce ürün ekle kanka!');
+                displayToast('Taranacak ürün bulunamadı. Önce ürün ekle!');
                 return;
             }
             appState.scans++;
             localStorage.setItem(STORAGE_KEYS.SCANS, appState.scans);
             refreshDashboardKPIs();
-            logEvent(`Toplu radar taraması başlatıldı (${appState.products.length} ürün taranıyor)...`, 'info');
+            logEvent(`Toplu tarama başlatıldı (${appState.products.length} ürün kontrol ediliyor)...`, 'info');
 
             setTimeout(() => {
-                logEvent(`Tarama tamamlandı. Tüm mağaza ve ilan bağlantıları doğrulandı.`, 'ok');
+                logEvent('Tarama tamamlandı, tüm mağaza bağlantıları doğrulandı.', 'ok');
                 displayToast(`🔄 ${appState.products.length} ürün başarıyla tarandı!`);
-            }, 500);
+            }, 600);
         }
 
         function simulateGlobalDiscount() {
             if (appState.products.length === 0) {
-                displayToast('Önce listeye en az 1 ürün eklemelisin!');
+                displayToast('Önce listeye ürün eklemelisin.');
                 return;
             }
             appState.products.forEach(p => {
-                const drop = Math.round(p.currentPrice * 0.11);
-                p.currentPrice = Math.max(10, p.currentPrice - drop);
+                p.currentPrice += 37500;
                 p.priceHistory.push(p.currentPrice);
-                if (p.priceHistory.length > 10) p.priceHistory.shift();
+                if (p.priceHistory.length > 12) p.priceHistory.shift();
             });
             persistProducts();
             renderProducts();
             refreshDashboardKPIs();
-            logEvent('SİMÜLASYON: Tüm listede %11 genel piyasa indirimi uygulandı!', 'ok');
-            sendBrowserPush('🔥 MEGA PİYASA İNDİRİMİ!', 'Takip ettiğin tüm ürünlerde toplu fırsat yakalandı!');
-            displayToast('🔥 Tüm ürünlerde indirim simüle edildi!');
+            logEvent('Piyasa geneli toplu zam dalgası simüle edildi.', 'warn');
+            sendBrowserPush('📈 ZAM DALGASI!', 'İlanlarda genel fiyat artışları tespit edildi!');
+            displayToast('📈 Toplu zam simüle edildi!');
         }
 
-        // Otomatik Simülasyon Döngüsü (Ayarlardan Açılırsa)
+        // ======================================================================
+        // 9. OTOMATİK SİMÜLASYON DÖNGÜSÜ
+        // ======================================================================
         function toggleAutoSimulation() {
             updateUserSettings();
             if (appState.settings.autoSim) {
-                startAutoSimLoop();
-                displayToast('⚡ Otomatik canlı simülasyon açıldı (Her 20 sn).');
+                appState.autoSimTimer = setInterval(() => {
+                    if (appState.products.length === 0) return;
+                    const randItem = appState.products[Math.floor(Math.random() * appState.products.length)];
+                    simulatePriceChange(randItem.id, Math.random() > 0.4 ? 'DROP' : 'RISE');
+                }, 20000);
+                displayToast('⚡ Otomatik canlı simülasyon başlatıldı.');
             } else {
                 clearInterval(appState.autoSimTimer);
                 displayToast('⏸️ Otomatik simülasyon durduruldu.');
             }
         }
 
-        function startAutoSimLoop() {
-            clearInterval(appState.autoSimTimer);
-            appState.autoSimTimer = setInterval(() => {
-                if (appState.products.length === 0) return;
-                const randItem = appState.products[Math.floor(Math.random() * appState.products.length)];
-                simulatePriceChange(randItem.id, Math.random() > 0.35 ? 'DROP' : 'RISE');
-            }, 20000);
-        }
-
-        // Filtreleme ve Listeleme
+        // ======================================================================
+        // 10. FİLTRELEME VE ÜRÜN KARTI RENDER MİMARİSİ
+        // ======================================================================
         function filterByStore(storeName, chipEl) {
             appState.currentStoreFilter = storeName;
             document.querySelectorAll('#storeFilterStrip .filter-chip').forEach(c => c.classList.remove('active'));
@@ -1820,6 +2065,8 @@ if __name__ == "__main__":
             const container = document.getElementById('radarItemsContainer');
             const query = document.getElementById('keywordSearch').value.toLowerCase();
             const orderBy = document.getElementById('orderBySelect').value;
+            const statusFilter = document.getElementById('statusFilterSelect').value;
+            if (!container) return;
 
             let list = appState.products.filter(p => {
                 const storeOk = appState.currentStoreFilter === 'ALL' || p.platform === appState.currentStoreFilter;
@@ -1827,7 +2074,13 @@ if __name__ == "__main__":
                                p.url.toLowerCase().includes(query) ||
                                p.category.toLowerCase().includes(query) ||
                                (p.note && p.note.toLowerCase().includes(query));
-                return storeOk && textOk;
+                
+                let statusOk = true;
+                if (statusFilter === 'DEAL') statusOk = (p.currentPrice <= p.targetPrice || p.currentPrice < p.initialPrice);
+                if (statusFilter === 'RISE') statusOk = (p.currentPrice > p.initialPrice);
+                if (statusFilter === 'OUT') statusOk = (p.stockState === 'OUT_OF_STOCK');
+
+                return storeOk && textOk && statusOk;
             });
 
             if (orderBy === 'price_low') list.sort((a, b) => a.currentPrice - b.currentPrice);
@@ -1841,20 +2094,21 @@ if __name__ == "__main__":
                     <div style="text-align:center; padding:40px 16px; color:var(--text-sub);">
                         <div style="font-size:38px; margin-bottom:10px;">📡</div>
                         <div style="font-size:15px; font-weight:800; color:var(--text-main); margin-bottom:6px;">Radarda Eşleşen Ürün Yok</div>
-                        <div style="font-size:12px; max-width:340px; margin:0 auto;">"Yeni Takip Ekle" sekmesinden Trendyol, Hepsiburada, N11 veya Sahibinden linki yapıştırarak izlemeyi başlatabilirsin.</div>
+                        <div style="font-size:12px; max-width:340px; margin:0 auto;">"Yeni Takip Ekle" sekmesinden e-ticaret veya ikinci el ilan linki ekleyebilirsin.</div>
                     </div>
                 `;
                 return;
             }
 
             container.innerHTML = list.map(p => {
-                const diff = p.initialPrice - p.currentPrice;
-                const pct = p.initialPrice > 0 ? Math.round((diff / p.initialPrice) * 100) : 0;
-                const isOpportunity = p.currentPrice <= p.targetPrice || diff > 0;
+                const diff = p.currentPrice - p.initialPrice;
+                const pct = p.initialPrice > 0 ? Math.round((Math.abs(diff) / p.initialPrice) * 100) : 0;
+                const isDeal = p.currentPrice <= p.targetPrice || diff < 0;
+                const isRise = diff > 0;
 
-                let stockHtml = `<span class="stock-pill stock-in">✓ Stokta / Yayında</span>`;
-                if (p.stockState === 'LOW_STOCK') stockHtml = `<span class="stock-pill stock-low">⚠️ Son Ürünler</span>`;
-                if (p.stockState === 'OUT_OF_STOCK') stockHtml = `<span class="stock-pill stock-out">❌ Tükendi / Kalktı</span>`;
+                let stockHtml = `<span class="stock-pill stock-in">✓ Aktif İlan</span>`;
+                if (p.stockState === 'LOW_STOCK') stockHtml = `<span class="stock-pill stock-low">⚠️ Son Ürün</span>`;
+                if (p.stockState === 'OUT_OF_STOCK') stockHtml = `<span class="stock-pill stock-out">❌ Tükendi</span>`;
 
                 const maxVal = Math.max(...p.priceHistory, 1);
                 const bars = p.priceHistory.map(v => {
@@ -1863,7 +2117,7 @@ if __name__ == "__main__":
                 }).join('');
 
                 return `
-                <article class="item-card ${isOpportunity ? 'deal-highlight' : ''}">
+                <article class="item-card ${isDeal ? 'deal-highlight' : (isRise ? 'rise-highlight' : '')}">
                     <div class="item-top-row">
                         <div>
                             <span class="store-tag ${getStoreBadgeStyle(p.platform)}">${p.platform}</span>
@@ -1878,26 +2132,26 @@ if __name__ == "__main__":
 
                     <div class="price-matrix">
                         <div class="p-cell">
-                            <span>Başlangıç</span>
+                            <span>İlk Kayıt</span>
                             <strong>${formatMoney(p.initialPrice)}</strong>
                         </div>
                         <div class="p-cell">
                             <span>Güncel Fiyat</span>
-                            <strong class="${diff > 0 ? 'c-green' : (diff < 0 ? 'c-red' : '')}">
+                            <strong class="${diff < 0 ? 'c-green' : (diff > 0 ? 'c-red' : '')}">
                                 ${formatMoney(p.currentPrice)}
-                                ${diff > 0 ? `(-%${pct})` : (diff < 0 ? `(+%${Math.abs(pct)})` : '')}
+                                ${diff < 0 ? `(-%${pct})` : (diff > 0 ? `(+%${pct})` : '')}
                             </strong>
                         </div>
                         <div class="p-cell">
-                            <span>Hedef Alarm</span>
+                            <span>Hedef Fiyat</span>
                             <strong class="c-gold">${formatMoney(p.targetPrice)}</strong>
                         </div>
                     </div>
 
                     <div class="chart-container">
                         <div class="chart-header">
-                            <span>Fiyat Geçmişi Trendi (${p.priceHistory.length} Ölçüm)</span>
-                            <span>Tarama: Her ${p.interval} dk</span>
+                            <span>Trend (${p.priceHistory.length} Ölçüm)</span>
+                            <span>Sıklık: ${p.interval} dk</span>
                         </div>
                         <div class="spark-bars">${bars}</div>
                     </div>
@@ -1907,88 +2161,105 @@ if __name__ == "__main__":
                     </div>
 
                     <div class="card-footer-btns">
-                        <button type="button" class="mini-btn mb-drop" onclick="simulatePriceChange(${p.id}, 'DROP')">📉 İndirim</button>
+                        <button type="button" class="mini-btn mb-drop" onclick="simulatePriceChange(${p.id}, 'DROP')">📉 Düşüş</button>
                         <button type="button" class="mini-btn mb-rise" onclick="simulatePriceChange(${p.id}, 'RISE')">📈 Zam</button>
                         <button type="button" class="mini-btn mb-stock" onclick="cycleStockState(${p.id})">📦 Stok</button>
-                        <button type="button" class="mini-btn mb-del" onclick="removeTracker(${p.id})">🗑️</button>
+                        <button type="button" class="mini-btn mb-edit" onclick="openEditModal(${p.id})">✏️ Düzenle</button>
+                        <button type="button" class="mini-btn mb-hist" onclick="openHistoryModal(${p.id})">📊 Geçmiş</button>
+                        <button type="button" class="mini-btn mb-del" onclick="removeTracker(${p.id})">🗑️ Sil</button>
                     </div>
                 </article>
                 `;
             }).join('');
         }
 
-        // Analiz & Karşılaştırma Sekmesi Render
+        // ======================================================================
+        // 11. ANALİTİK SEKMESİ & CSV DIŞA AKTARMA
+        // ======================================================================
         function renderAnalytics() {
             const breakdownEl = document.getElementById('storeBreakdownArea');
             const tbody = document.getElementById('matrixTableBody');
+            if (!tbody) return;
 
             if (appState.products.length === 0) {
-                breakdownEl.innerHTML = `<div style="font-size:12px; color:var(--text-sub);">Analiz için önce takip listesine ürün eklemelisin.</div>`;
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted);">Kayıtlı veri yok.</td></tr>`;
+                if (breakdownEl) breakdownEl.innerHTML = `<div style="font-size:12px; color:var(--text-sub);">Analiz için veri bulunmuyor.</div>`;
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-muted);">Kayıtlı veri yok.</td></tr>`;
                 return;
             }
 
-            // Mağaza dağılımı hesapla
             const counts = {};
-            appState.products.forEach(p => {
-                counts[p.platform] = (counts[p.platform] || 0) + 1;
-            });
+            appState.products.forEach(p => { counts[p.platform] = (counts[p.platform] || 0) + 1; });
 
-            breakdownEl.innerHTML = Object.keys(counts).map(store => {
-                const pct = Math.round((counts[store] / appState.products.length) * 100);
-                return `
-                <div style="margin-bottom:10px;">
-                    <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:700; margin-bottom:4px;">
-                        <span>${store}</span>
-                        <span>${counts[store]} Ürün (%${pct})</span>
+            if (breakdownEl) {
+                breakdownEl.innerHTML = Object.keys(counts).map(store => {
+                    const pct = Math.round((counts[store] / appState.products.length) * 100);
+                    return `
+                    <div style="margin-bottom:10px;">
+                        <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:700; margin-bottom:4px;">
+                            <span>${store}</span>
+                            <span>${counts[store]} Ürün (%${pct})</span>
+                        </div>
+                        <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
                     </div>
-                    <div class="progress-track">
-                        <div class="progress-fill" style="width:${pct}%"></div>
-                    </div>
-                </div>
-                `;
-            }).join('');
+                    `;
+                }).join('');
+            }
 
-            // Tablo satırları
-            tbody.innerHTML = appState.products.map(p => {
+            tbody.innerHTML = appState.products.appMap ? '' : appState.products.map(p => {
+                const diff = p.currentPrice - p.initialPrice;
                 const isDeal = p.currentPrice <= p.targetPrice;
                 return `
                 <tr>
                     <td>${p.title}</td>
                     <td><span class="store-tag ${getStoreBadgeStyle(p.platform)}">${p.platform}</span></td>
                     <td>${formatMoney(p.initialPrice)}</td>
-                    <td style="color:${p.currentPrice < p.initialPrice ? 'var(--primary)' : '#fff'};">${formatMoney(p.currentPrice)}</td>
+                    <td style="color:${diff < 0 ? 'var(--primary)' : (diff > 0 ? 'var(--danger)' : '#fff')};">${formatMoney(p.currentPrice)}</td>
+                    <td style="color:${diff < 0 ? 'var(--primary)' : (diff > 0 ? 'var(--danger)' : 'var(--text-sub)}')};">${diff > 0 ? '+' : ''}${formatMoney(diff)}</td>
                     <td style="color:var(--accent);">${formatMoney(p.targetPrice)}</td>
-                    <td>${isDeal ? '<span style="color:var(--primary);">🎯 Hedef Yakalandı</span>' : '<span style="color:var(--text-sub);">⏳ Bekleniyor</span>'}</td>
+                    <td>${isDeal ? '<span style="color:var(--primary);">🎯 Hedefte</span>' : '<span style="color:var(--text-sub);">İzleniyor</span>'}</td>
                 </tr>
                 `;
             }).join('');
         }
 
-        // KPI ve Sepet Değerlerini Güncelle
+        function exportCsvReport() {
+            if (appState.products.length === 0) {
+                displayToast('Dışa aktarılacak ürün yok.');
+                return;
+            }
+            let csv = "ID,Baslik,Platform,Kategori,IlkFiyat,GuncelFiyat,HedefFiyat,EklemeTarihi\n";
+            appState.products.forEach(p => {
+                csv += `${p.id},"${p.title.replace(/"/g, '""')}","${p.platform}","${p.category}",${p.initialPrice},${p.currentPrice},${p.targetPrice},"${p.addedDate}"\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `firsat_radar_rapor_${Date.now()}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+            displayToast('📊 CSV Raporu indirildi!');
+        }
+
+        // ======================================================================
+        // 12. KPI & SEPET ÖZET GÜNCELLEME
+        // ======================================================================
         function refreshDashboardKPIs() {
-            document.getElementById('valTotal').innerText = appState.products.length;
+            const totalEl = document.getElementById('valTotal');
+            if (!totalEl) return;
+            totalEl.innerText = appState.products.length;
 
-            let dealsCount = 0;
-            let totalSaved = 0;
-            let totalBasket = 0;
-            let targetBasket = 0;
-
+            let deals = 0, saved = 0, totalBasket = 0, targetBasket = 0;
             appState.products.forEach(p => {
                 totalBasket += p.currentPrice;
                 targetBasket += p.targetPrice;
-                if (p.currentPrice <= p.targetPrice || p.currentPrice < p.initialPrice) {
-                    dealsCount++;
-                }
-                if (p.initialPrice > p.currentPrice) {
-                    totalSaved += (p.initialPrice - p.currentPrice);
-                }
+                if (p.currentPrice <= p.targetPrice || p.currentPrice < p.initialPrice) deals++;
+                if (p.initialPrice > p.currentPrice) saved += (p.initialPrice - p.currentPrice);
             });
 
-            document.getElementById('valDeals').innerText = dealsCount;
-            document.getElementById('valSavings').innerText = formatMoney(totalSaved);
+            document.getElementById('valDeals').innerText = deals;
+            document.getElementById('valSavings').innerText = formatMoney(saved);
             document.getElementById('valScans').innerText = appState.scans;
-
             document.getElementById('totalBasketVal').innerText = formatMoney(totalBasket);
             document.getElementById('targetBasketVal').innerText = formatMoney(targetBasket);
 
@@ -1996,43 +2267,105 @@ if __name__ == "__main__":
             document.getElementById('savingsProgressBar').style.width = ratio + '%';
         }
 
-        // Konsol Logları
+        // ======================================================================
+        // 13. KONSOL LOGLARI VE BİLDİRİM GEÇMİŞİ MERKEZİ
+        // ======================================================================
         function logEvent(msg, level = 'info') {
             const ts = new Date().toLocaleTimeString('tr-TR');
             appState.logs.unshift({ ts, msg, level });
-            if (appState.logs.length > 80) appState.logs.pop();
+            if (appState.logs.length > 90) appState.logs.pop();
             localStorage.setItem(STORAGE_KEYS.LOGS, JSON.stringify(appState.logs));
             renderConsole();
         }
 
         function renderConsole() {
             const box = document.getElementById('consoleScreen');
-            box.innerHTML = appState.logs.map(item => {
-                const cls = 'c-' + item.level;
-                return `<div class="c-line"><span class="c-ts">[${item.ts}]</span> <span class="${cls}">${item.msg}</span></div>`;
-            }).join('');
+            if (!box) return;
+            box.innerHTML = appState.logs.map(i => `<div class="c-line"><span class="c-ts">[${i.ts}]</span> <span class="c-${i.level}">${i.msg}</span></div>`).join('');
         }
 
         function wipeConsoleLogs() {
             appState.logs = [];
             localStorage.setItem(STORAGE_KEYS.LOGS, JSON.stringify(appState.logs));
             renderConsole();
-            displayToast('Konsol kayıtları temizlendi.');
+            displayToast('Konsol günlüğü temizlendi.');
         }
 
-        // Bildirim ve Ses Motoru
+        function pushNotificationHistory(title, body) {
+            const ts = new Date().toLocaleTimeString('tr-TR');
+            appState.notifications.unshift({ ts, title, body, read: false });
+            if (appState.notifications.length > 50) appState.notifications.pop();
+            localStorage.setItem(STORAGE_KEYS.NOTIFS, JSON.stringify(appState.notifications));
+            updateUnreadBellBadge();
+        }
+
+        function updateUnreadBellBadge() {
+            const unread = appState.notifications.filter(n => !n.read).length;
+            const badge = document.getElementById('unreadNotifCount');
+            if (!badge) return;
+            if (unread > 0) {
+                badge.innerText = unread;
+                badge.classList.add('show');
+            } else {
+                badge.classList.remove('show');
+            }
+        }
+
+        function openNotificationCenter() {
+            const listEl = document.getElementById('notifCenterList');
+            if (!listEl) return;
+
+            appState.notifications.forEach(n => n.read = true);
+            localStorage.setItem(STORAGE_KEYS.NOTIFS, JSON.stringify(appState.notifications));
+            updateUnreadBellBadge();
+
+            if (appState.notifications.length === 0) {
+                listEl.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-sub);">Henüz bildirim geçmişi yok.</div>`;
+            } else {
+                listEl.innerHTML = appState.notifications.map(n => `
+                    <div class="history-row">
+                        <div>
+                            <strong style="display:block; color:var(--text-main); font-size:12px;">${n.title}</strong>
+                            <span style="color:var(--text-sub); font-size:11px;">${n.body}</span>
+                        </div>
+                        <span style="color:var(--text-muted); font-size:10px; white-space:nowrap;">${n.ts}</span>
+                    </div>
+                `).join('');
+            }
+            document.getElementById('notifCenterModal').classList.add('open');
+        }
+
+        function clearNotificationHistory() {
+            appState.notifications = [];
+            localStorage.setItem(STORAGE_KEYS.NOTIFS, JSON.stringify(appState.notifications));
+            updateUnreadBellBadge();
+            openNotificationCenter();
+            displayToast('Bildirim geçmişi temizlendi.');
+        }
+
+        // ======================================================================
+        // 14. PUSH BİLDİRİM & SES MOTORU
+        // ======================================================================
         async function sendBrowserPush(title, body) {
+            pushNotificationHistory(title, body);
+
             if (appState.settings.quiet) {
                 const h = new Date().getHours();
-                if (h >= 23 || h < 7) {
-                    logEvent('Sessiz saatler aktif: Push bildirimi susturuldu.', 'warn');
-                    return;
-                }
+                if (h >= 23 || h < 7) return;
             }
 
-            if (appState.settings.sound) playAlertTone();
+            if (appState.settings.sound) {
+                try {
+                    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                    const osc = ctx.createOscillator();
+                    const g = ctx.createGain();
+                    osc.connect(g); g.connect(ctx.destination);
+                    osc.frequency.setValueAtTime(880, ctx.currentTime);
+                    g.gain.setValueAtTime(0.08, ctx.currentTime);
+                    osc.start(); osc.stop(ctx.currentTime + 0.15);
+                } catch(e){}
+            }
 
-            // Webhook varsa arka planda gönder
             if (appState.settings.webhook && appState.settings.webhook.startsWith('http')) {
                 fetch(appState.settings.webhook, {
                     method: 'POST',
@@ -2044,36 +2377,78 @@ if __name__ == "__main__":
             if ('serviceWorker' in navigator && Notification.permission === 'granted') {
                 const reg = await navigator.serviceWorker.ready;
                 reg.showNotification(title, {
-                    body: body,
+                    body,
                     icon: 'https://via.placeholder.com/192/00e676/000000?text=FR',
-                    vibrate: appState.settings.vibrate ? [200, 100, 200] : [],
-                    tag: 'fr-pro-' + Date.now()
+                    vibrate: appState.settings.vibrate ? [200, 100, 200] : []
                 });
             }
         }
 
         function fireTestNotification() {
-            sendBrowserPush('⚡ Fırsat Radar PRO Test', 'Push bildirim, ses ve titreşim modülleri kusursuz çalışıyor!');
-            logEvent('Manuel test bildirimi tetiklendi.', 'ok');
-            displayToast('🔔 Test bildirimi gönderildi!');
+            sendBrowserPush('⚡ Fırsat Radar PRO Test', 'Push bildirim ve ses motoru kusursuz çalışıyor!');
+            logEvent('Manuel test bildirimi gönderildi.', 'ok');
+            displayToast('🔔 Test bildirimi yollandı!');
         }
 
-        function playAlertTone() {
-            try {
-                const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(880, ctx.currentTime);
-                gain.gain.setValueAtTime(0.08, ctx.currentTime);
-                osc.start();
-                osc.stop(ctx.currentTime + 0.16);
-            } catch (e) {}
+        // ======================================================================
+        // 15. MODAL YÖNETİMİ (DÜZENLEME & GEÇMİŞ)
+        // ======================================================================
+        function openEditModal(id) {
+            const item = appState.products.find(p => p.id === id);
+            if (!item) return;
+            document.getElementById('editProdId').value = item.id;
+            document.getElementById('editProdTitle').value = item.title;
+            document.getElementById('editProdCurrent').value = item.currentPrice;
+            document.getElementById('editProdTarget').value = item.targetPrice;
+            document.getElementById('editProdNote').value = item.note || '';
+            document.getElementById('editProductModal').classList.add('open');
         }
 
-        // Ayarlar & Yedekleme
+        function saveEditedProduct() {
+            const id = parseInt(document.getElementById('editProdId').value);
+            const item = appState.products.find(p => p.id === id);
+            if (!item) return;
+
+            item.title = document.getElementById('editProdTitle').value.trim();
+            item.currentPrice = parseFloat(document.getElementById('editProdCurrent').value) || item.currentPrice;
+            item.targetPrice = parseFloat(document.getElementById('editProdTarget').value) || item.targetPrice;
+            item.note = document.getElementById('editProdNote').value.trim();
+
+            item.priceHistory.push(item.currentPrice);
+            if (item.priceHistory.length > 12) item.priceHistory.shift();
+
+            persistProducts();
+            renderProducts();
+            refreshDashboardKPIs();
+            closeModal('editProductModal');
+            displayToast('✅ Ürün bilgileri güncellendi!');
+            logEvent(`Ürün güncellendi: ${item.title}`, 'ok');
+        }
+
+        function openHistoryModal(id) {
+            const item = appState.products.find(p => p.id === id);
+            if (!item) return;
+            document.getElementById('historyModalTitle').innerText = `📊 Fiyat Geçmişi: ${item.title}`;
+            const bodyEl = document.getElementById('historyModalBody');
+            
+            bodyEl.innerHTML = item.priceHistory.map((val, idx) => `
+                <div class="history-row">
+                    <span>Ölçüm #${idx + 1}</span>
+                    <strong style="color:var(--primary);">${formatMoney(val)}</strong>
+                </div>
+            `).join('');
+
+            document.getElementById('historyModalData') ? null : null;
+            document.getElementById('historyModal').classList.add('open');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('open');
+        }
+
+        // ======================================================================
+        // 16. AYARLAR, WEBHOOK VE YEDEKLEME MERKEZİ
+        // ======================================================================
         function applySettingsToUI() {
             document.getElementById('optSound').checked = appState.settings.sound;
             document.getElementById('optVibrate').checked = appState.settings.vibrate;
@@ -2091,33 +2466,28 @@ if __name__ == "__main__":
                 webhook: document.getElementById('optWebhook').value.trim()
             };
             localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(appState.settings));
-            displayToast('⚙️ Tercihler kaydedildi.');
+            displayToast('⚙️ Ayarlar kaydedildi.');
         }
 
         function testWebhookConnection() {
             const url = document.getElementById('optWebhook').value.trim();
-            if (!url) {
-                displayToast('⚠️ Önce geçerli bir Webhook URL gir!');
-                return;
-            }
+            if (!url) { displayToast('⚠️ Önce Webhook URL gir!'); return; }
             fetch(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ content: '🚀 **Fırsat Radar PRO** Webhook bağlantısı başarıyla doğrulandı!' })
+                body: JSON.stringify({ content: '🚀 **Fırsat Radar PRO** Webhook bağlantısı doğrulandı!' })
             })
             .then(() => {
-                displayToast('✅ Webhook test mesajı gönderildi!');
-                logEvent('Webhook test sinyali başarıyla iletildi.', 'ok');
+                displayToast('✅ Webhook testi başarılı!');
+                logEvent('Webhook test sinyali iletildi.', 'ok');
             })
-            .catch(() => {
-                displayToast('❌ Webhook gönderimi başarısız (CORS veya hatalı URL).');
-            });
+            .catch(() => displayToast('❌ Webhook hatası (CORS veya geçersiz URL).'));
         }
 
-        function copyBotScript() {
-            const code = document.getElementById('pythonBotCode').innerText;
-            navigator.clipboard.writeText(code).then(() => {
-                displayToast('📋 Python bot kodu panoya kopyalandı!');
+        function copyTextFromId(elemId) {
+            const text = document.getElementById(elemId).innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                displayToast('📋 Kod panoya kopyalandı!');
             });
         }
 
@@ -2143,6 +2513,7 @@ if __name__ == "__main__":
                     renderProducts();
                     refreshDashboardKPIs();
                     displayToast('📥 Yedek başarıyla geri yüklendi!');
+                    logEvent('JSON yedek dosyası yüklendi.', 'ok');
                 } else {
                     alert('Geçersiz JSON formatı!');
                 }
@@ -2152,19 +2523,24 @@ if __name__ == "__main__":
         }
 
         function factoryResetApp() {
-            if (confirm('Tüm takip listen, geçmiş ve ayarların kalıcı olarak silinecek. Emin misin?')) {
+            if (confirm('Tüm takip listesi, geçmiş ve ayarlar kalıcı olarak silinecek. Emin misin?')) {
                 localStorage.clear();
                 appState.products = [];
                 appState.logs = [];
+                appState.notifications = [];
                 appState.scans = 0;
                 renderProducts();
                 renderConsole();
                 refreshDashboardKPIs();
+                updateUnreadBellBadge();
                 displayToast('🗑️ Tüm sistem verileri sıfırlandı.');
+                logEvent('Kullanıcı fabrika ayarlarına sıfırlama yaptı.', 'err');
             }
         }
 
-        // Yardımcı Fonksiyonlar
+        // ======================================================================
+        // 17. YARDIMCI FORMATLAYICILAR VE TOAST MESAJLARI
+        // ======================================================================
         function persistProducts() {
             localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(appState.products));
         }
@@ -2175,6 +2551,7 @@ if __name__ == "__main__":
 
         function displayToast(text) {
             const el = document.getElementById('toastAlert');
+            if (!el) return;
             el.innerText = text;
             el.classList.add('visible');
             setTimeout(() => el.classList.remove('visible'), 3000);
@@ -2182,3 +2559,4 @@ if __name__ == "__main__":
     </script>
 </body>
 </html>
+
